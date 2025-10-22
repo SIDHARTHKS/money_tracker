@@ -78,6 +78,7 @@ class AppColorHelper {
   Color get incomeColor => _currentTheme.incomeColor;
 
   Color get cardColor2 => _currentTheme.cardColor2;
+  Color get cardColor3 => _currentTheme.cardColor3;
   Color get pieColor => _currentTheme.pieColor;
   Color get pieBgColor => _currentTheme.pieBgColor;
 
@@ -94,4 +95,5 @@ class AppColorHelper {
   Color get billsColor => _currentTheme.billsColor;
   Color get rechargeColor => _currentTheme.rechargeColor;
   Color get savingsColor => _currentTheme.savingsColor;
+  Color get missColor => _currentTheme.missColor;
 }

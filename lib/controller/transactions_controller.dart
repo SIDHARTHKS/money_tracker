@@ -4,11 +4,22 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/helper/app_message.dart';
 import 'package:tracker/helper/color_helper.dart';
+import 'package:tracker/model/salary_model.dart';
 import 'package:tracker/model/transaction_model.dart';
 import '../helper/core/base/app_base_controller.dart';
 
 class TransactionsController extends AppBaseController
     with GetSingleTickerProviderStateMixin {
+  DateTime selectedDate = DateTime.now();
+  //
+
+  // funds
+  RxDouble rxTotalbalance = 0.0.obs;
+  RxDouble rxTotalspend = 0.0.obs;
+  RxDouble rxTotalincome = 0.0.obs;
+  late Box<SalaryModel> _salbox;
+  RxDouble salary = 0.0.obs;
+
   //transactions
   late Box<TransactionModel> _txBox;
   var transactions = <TransactionModel>[].obs;
@@ -36,11 +47,6 @@ class TransactionsController extends AppBaseController
       'name': 'Food',
       'icon': Icons.fastfood_outlined,
       'color': AppColorHelper().foodColor,
-    },
-    {
-      'name': 'Salary',
-      'icon': Icons.attach_money_rounded,
-      'color': AppColorHelper().salaryColor,
     },
     {
       'name': 'Fuel',
@@ -78,15 +84,24 @@ class TransactionsController extends AppBaseController
       'color': AppColorHelper().rechargeColor,
     },
     {
+      'name': 'Salary',
+      'icon': Icons.attach_money_rounded,
+      'color': AppColorHelper().salaryColor,
+    },
+    {
       'name': 'Savings',
       'icon': Icons.account_balance_wallet_outlined,
       'color': AppColorHelper().savingsColor,
+    },
+    {
+      'name': 'Miscellaneous',
+      'icon': Icons.star,
+      'color': AppColorHelper().missColor,
     },
   ];
 
   final List<Map<String, String>> categoryTypes = [
     {'type': 'Food'},
-    {'type': 'Salary'},
     {'type': 'Fuel'},
     {'type': 'Travel'},
     {'type': 'Home Rent'},
@@ -95,7 +110,58 @@ class TransactionsController extends AppBaseController
     {'type': 'Bills'},
     {'type': 'Recharge'},
     {'type': 'Savings'},
+    {'type': 'Salary'},
+    {'type': 'Miscellaneous'},
   ];
+
+  // chart
+
+  void changeMonth(bool isNext) {
+    final now = DateTime.now();
+    int year = selectedDate.year;
+    int month = selectedDate.month;
+
+    if (isNext) {
+      // Only increment if not the current month
+      if (!(year == now.year && month == now.month)) {
+        if (month == 12) {
+          month = 1;
+          year += 1;
+        } else {
+          month += 1;
+        }
+      }
+    } else {
+      if (month == 1) {
+        month = 12;
+        year -= 1;
+      } else {
+        month -= 1;
+      }
+    }
+
+    selectedDate = DateTime(year, month);
+    getPieChartData(selectedDate);
+  }
+
+  ///////////////////////////////////////////////////////////salary
+  ///
+  ///
+  Future<void> load({DateTime? date}) async {
+    if (_salbox.isNotEmpty) {
+      double total = 0.0;
+      final targetDate = date ?? DateTime.now();
+      for (var entry in _salbox.values) {
+        if (entry.month.year == targetDate.year &&
+            entry.month.month == targetDate.month) {
+          total += entry.totalSalary;
+        }
+      }
+      salary.value = total;
+    } else {
+      salary.value = 0.0;
+    }
+  }
 
   //////////////////////////////////////////////////////////////////transactions
 
@@ -222,12 +288,15 @@ class TransactionsController extends AppBaseController
 
     // Open boxes first
     _txBox = Hive.box<TransactionModel>('transactions');
+    _salbox = Hive.box<SalaryModel>('salaryBox');
 
     // Load initial data
     await loadAll();
+    await load();
 
     // Watch for changes
     _txBox.watch().listen((event) => loadAll());
+    _salbox.watch().listen((_) => load());
 
     getPieChartData(DateTime.now());
   }

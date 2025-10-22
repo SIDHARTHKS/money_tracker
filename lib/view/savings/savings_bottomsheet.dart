@@ -124,7 +124,7 @@ class SavingsBottomsheet extends StatelessWidget {
               ),
             ),
           ),
-          height(10),
+          height(35),
         ],
       ),
     );

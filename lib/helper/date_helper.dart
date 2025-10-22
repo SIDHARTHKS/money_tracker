@@ -40,6 +40,10 @@ class DateHelper {
     return months[month];
   }
 
+  String formatMonthYear(DateTime date) {
+    return DateFormat('MMM yyyy').format(date);
+  }
+
   static String convertDateTimeToString({
     required DateTime dateTime,
     String? outputFormat,

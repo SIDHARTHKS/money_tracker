@@ -22,7 +22,7 @@ kotlinOptions {
 
     defaultConfig {
         applicationId = "com.sid.trackerApp"
-        minSdk = 23   // 👈 Kotlin DSL property
+        minSdk = flutter.minSdkVersion   // 👈 Kotlin DSL property
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

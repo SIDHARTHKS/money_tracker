@@ -5,19 +5,19 @@ import 'package:tracker/helper/sizer.dart';
 import 'package:tracker/view/widget/common_widget.dart';
 
 class CommonPieChart extends StatelessWidget {
-  final Map<String, double> data; // e.g. {'Food': 2000, 'Travel': 1500}
-  final double total; // e.g. salary = 10000
+  final Map<String, double> data;
+  final double total;
   final double radius;
   final double centerSpaceRadius;
   final TextStyle? labelStyle;
   final bool showPercentages;
 
-  const CommonPieChart({
+  CommonPieChart({
     super.key,
     required this.data,
     required this.total,
-    this.radius = 90,
-    this.centerSpaceRadius = 80,
+    this.radius = 100,
+    this.centerSpaceRadius = 70,
     this.labelStyle,
     this.showPercentages = true,
   });
@@ -28,159 +28,155 @@ class CommonPieChart extends StatelessWidget {
     final spent = data.values.fold(0.0, (a, b) => a + b);
     final unspent = (total - spent).clamp(0.0, total);
 
-    return Material(
-      elevation: 0,
-      color: theme.colorScheme.surface,
-      borderRadius: BorderRadius.circular(24),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColorHelper().cardColor.withOpacity(0.95),
+            AppColorHelper().cardColor.withOpacity(0.75),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(35),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            offset: const Offset(0, 0),
+            blurRadius: 100,
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // Pie chart area with fixed height
-            SizedBox(
-              width: radius * 2 + 32,
-              height: 400,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Shadow layer for 3D effect
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          Colors.black.withOpacity(0.05),
-                          Colors.transparent,
-                        ],
-                        center: Alignment.center,
-                        radius: 0.8,
-                      ),
-                    ),
-                  ),
-
-                  // Pie chart
-                  PieChart(
-                    PieChartData(
-                      sections: _generateSections(spent, unspent, theme),
-                      centerSpaceRadius: centerSpaceRadius,
-                      sectionsSpace: 2,
-                      startDegreeOffset: -100,
-                      borderData: FlBorderData(show: false),
-                    ),
-                    swapAnimationDuration: const Duration(milliseconds: 800),
-                    swapAnimationCurve: Curves.easeInOutCubic,
-                  ),
-
-                  // Elevated center
-                  Container(
-                    width: centerSpaceRadius * 2,
-                    height: centerSpaceRadius * 2,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [Colors.white, Colors.grey.shade200],
-                        center: Alignment.topLeft,
-                        radius: 1.0,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
-                          offset: const Offset(0, 6),
-                          blurRadius: 12,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Center text
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Spent",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      Text(
-                        "₹${spent.toStringAsFixed(0)}",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "/ ₹${total.toStringAsFixed(0)}",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: theme.colorScheme.onSurfaceVariant
-                              .withOpacity(0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            appText(
+              "Spending Overview",
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+              color: AppColorHelper().primaryTextColor,
             ),
-
-            const SizedBox(height: 16),
-
-            // Legend
-            Column(
-              children: data.entries.map((entry) {
-                final category = entry.key;
-                final amount = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: AppColorHelper().cardColor,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: _getColorForCategory(category)
-                                .withValues(alpha: 0.45),
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        width(8),
-                        Expanded(
-                          child: appText(
-                            category,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColorHelper().primaryTextColor,
-                          ),
-                        ),
-                        appText(
-                          " ${amount.toStringAsFixed(0)}",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: AppColorHelper()
-                              .primaryTextColor
-                              .withValues(alpha: 0.7),
-                        ),
-                        width(8),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+            height(45),
+            _buildPieChart(theme, spent, unspent),
+            height(35),
+            _buildLegend(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPieChart(ThemeData theme, double spent, double unspent) {
+    return SizedBox(
+      height: 320,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          PieChart(
+            PieChartData(
+              sections: _generateSections(spent, unspent, theme),
+              centerSpaceRadius: centerSpaceRadius,
+              sectionsSpace: 3,
+              startDegreeOffset: -45,
+              borderData: FlBorderData(show: false),
+            ),
+            swapAnimationDuration: const Duration(milliseconds: 900),
+            swapAnimationCurve: Curves.easeOutQuint,
+          ),
+
+          // Glassy center circle
+          Container(
+            width: centerSpaceRadius * 2,
+            height: centerSpaceRadius * 2,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColorHelper().cardColor.withOpacity(0.7),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  offset: const Offset(0, 3),
+                  blurRadius: 6,
+                ),
+              ],
+              // backdropFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            ),
+          ),
+
+          // Center Percentage Text
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: appText(
+                  getPercentage(spent, total),
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
+                  color:
+                      AppColorHelper().primaryTextColor.withValues(alpha: 0.7),
+                ),
+              ),
+              height(4),
+              appText(
+                "Used",
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: AppColorHelper().primaryTextColor.withValues(alpha: 0.6),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegend() {
+    final sortedEntries =
+        (data.entries.toList()..sort((a, b) => b.value.compareTo(a.value)));
+
+    return Column(
+      children: sortedEntries.map((entry) {
+        final category = entry.key;
+        final amount = entry.value;
+        final color = _getColorForCategory(category);
+
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.00),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Container(
+                height: 36,
+                width: 36,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.65),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: _buildBadge(category),
+              ),
+              width(10),
+              Expanded(
+                child: appText(
+                  category,
+                  fontWeight: FontWeight.w600,
+                  color: AppColorHelper().primaryTextColor,
+                ),
+              ),
+              appText(
+                "${amount.toStringAsFixed(0)} ₹",
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+                color: AppColorHelper().primaryTextColor.withValues(alpha: 0.7),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -192,48 +188,48 @@ class CommonPieChart extends StatelessWidget {
       for (var entry in data.entries) {
         final category = entry.key;
         final amount = entry.value;
-        final percentage = (amount / total * 100).clamp(0, 100);
+        final color = _getColorForCategory(category);
 
         sections.add(
           PieChartSectionData(
             value: amount,
-            title: showPercentages ? "${percentage.toStringAsFixed(1)}%" : "",
+            color: color.withValues(alpha: 0.65),
+            title: showPercentages
+                ? "${((amount / total) * 100).toStringAsFixed(1)}%"
+                : "",
             radius: radius,
-            color: _getColorForCategory(category).withValues(alpha: 0.45),
             titleStyle: labelStyle ??
                 const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
-            badgeWidget: _buildBadge(category),
-            badgePositionPercentageOffset: 1.3,
-            borderSide: BorderSide(
-              color: Colors.black.withOpacity(0.1),
-              width: 1.5,
+            badgeWidget: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: color.withValues(alpha: 0.45),
+              ),
+              padding: const EdgeInsets.all(4),
+              child: _buildBadge(category),
             ),
+            badgePositionPercentageOffset: 1.25,
           ),
         );
       }
     }
 
     if (unspent > 0) {
-      final unspentPercent = (unspent / total * 100).clamp(0, 100);
       sections.add(
         PieChartSectionData(
           value: unspent,
-          title: showPercentages ? "${unspentPercent.toStringAsFixed(1)}%" : "",
-          radius: radius - 4,
-          color: _getColorForCategory('unspent'),
+          color: AppColorHelper().borderColor.withOpacity(0.1),
+          title: "",
           titleStyle: const TextStyle(
-            fontSize: 12,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
-          borderSide: BorderSide(
-            color: Colors.black.withOpacity(0.1),
-            width: 1.5,
-          ),
+          radius: radius - 10,
         ),
       );
     }
@@ -241,74 +237,84 @@ class CommonPieChart extends StatelessWidget {
     return sections;
   }
 
-  Widget _buildBadge(String category) {
-    IconData icon;
-    switch (category.toLowerCase()) {
-      case 'food':
-        icon = Icons.restaurant_outlined;
-        break;
-      case 'travel':
-        icon = Icons.flight_takeoff_outlined;
-        break;
-      case 'fuel':
-        icon = Icons.local_gas_station_outlined;
-        break;
-      case 'shopping':
-        icon = Icons.shopping_bag_outlined;
-        break;
-      case 'movies':
-        icon = Icons.movie_outlined;
-        break;
-      case 'bills':
-        icon = Icons.receipt_long_outlined;
-        break;
-      default:
-        icon = Icons.circle_outlined;
-    }
+  String getPercentage(double spent, double total) {
+    if (total == 0) return "0%";
+    final percentage = (spent / total) * 100;
+    final rounded = percentage.roundToDouble();
+    return "${rounded.toInt()}%";
+  }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(2, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(6),
-      child: Icon(icon, size: 14, color: Colors.grey[800]),
+  Icon _buildBadge(String category, {double size = 20}) {
+    final matchedCategory = categoryIcons.firstWhere(
+      (item) => item['name'].toString().toLowerCase() == category.toLowerCase(),
+      orElse: () => {'icon': Icons.circle_outlined, 'color': Colors.grey},
     );
+    return Icon(matchedCategory['icon'], color: Colors.black, size: size);
   }
 
   Color _getColorForCategory(String category) {
-    switch (category.toLowerCase()) {
-      case 'food':
-        return AppColorHelper().foodColor;
-      case 'salary':
-        return AppColorHelper().salaryColor;
-      case 'fuel':
-        return AppColorHelper().fuelColor;
-      case 'travel':
-        return AppColorHelper().travelColor;
-      case 'home rent':
-        return AppColorHelper().homeRentColor;
-      case 'shopping':
-        return AppColorHelper().shoppingColor;
-      case 'movies':
-        return AppColorHelper().moviesColor;
-      case 'bills':
-        return AppColorHelper().billsColor;
-      case 'recharge':
-        return AppColorHelper().rechargeColor;
-      case 'savings':
-        return AppColorHelper().savingsColor;
-      case 'unspent':
-        return const Color.fromARGB(255, 147, 147, 147).withOpacity(0.6);
-      default:
-        return AppColorHelper().billsColor;
-    }
+    final matchedCategory = categoryIcons.firstWhere(
+      (item) => item['name'].toString().toLowerCase() == category.toLowerCase(),
+      orElse: () => {'color': Colors.grey},
+    );
+    return matchedCategory['color'] as Color;
   }
+
+  final List<Map<String, dynamic>> categoryIcons = [
+    {
+      'name': 'Food',
+      'icon': Icons.fastfood_outlined,
+      'color': AppColorHelper().foodColor
+    },
+    {
+      'name': 'Salary',
+      'icon': Icons.attach_money_rounded,
+      'color': AppColorHelper().salaryColor
+    },
+    {
+      'name': 'Fuel',
+      'icon': Icons.local_gas_station_outlined,
+      'color': AppColorHelper().fuelColor
+    },
+    {
+      'name': 'Travel',
+      'icon': Icons.flight_takeoff_outlined,
+      'color': AppColorHelper().travelColor
+    },
+    {
+      'name': 'Home Rent',
+      'icon': Icons.home_outlined,
+      'color': AppColorHelper().homeRentColor
+    },
+    {
+      'name': 'Shopping',
+      'icon': Icons.shopping_bag_outlined,
+      'color': AppColorHelper().shoppingColor
+    },
+    {
+      'name': 'Movies',
+      'icon': Icons.movie_outlined,
+      'color': AppColorHelper().moviesColor
+    },
+    {
+      'name': 'Bills',
+      'icon': Icons.receipt_long_outlined,
+      'color': AppColorHelper().billsColor
+    },
+    {
+      'name': 'Recharge',
+      'icon': Icons.phone_android_outlined,
+      'color': AppColorHelper().rechargeColor
+    },
+    {
+      'name': 'Savings',
+      'icon': Icons.account_balance_wallet_outlined,
+      'color': AppColorHelper().savingsColor
+    },
+    {
+      'name': 'Miscellaneous',
+      'icon': Icons.star,
+      'color': AppColorHelper().missColor,
+    },
+  ];
 }

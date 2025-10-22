@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tracker/gen/assets.gen.dart';
 import 'package:tracker/helper/app_string.dart';
 import 'package:tracker/helper/color_helper.dart';
@@ -17,73 +18,133 @@ class LedgerScreen extends AppBaseView<HomeController> {
   @override
   Widget buildView() {
     final theme = Theme.of(Get.context!);
-    return appScaffold(
-      canpop: true,
-      extendBodyBehindAppBar: false,
-      appBar: appBar(
-        titleText: "Ledger",
-        showbackArrow: true,
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await showModalBottomSheet(
-            context: Get.context!,
-            isScrollControlled: true,
-            backgroundColor: AppColorHelper().backgroundColor,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            builder: (context) => LedgerBottomsheet(),
-          );
-        },
-        label: Text(
-          "Add Entry",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-            letterSpacing: 0.3,
-            color: AppColorHelper().textColor, // ensure good contrast
+    return Obx(() {
+      return appScaffold(
+        canpop: true,
+        extendBodyBehindAppBar: false,
+        appBar: appBar(
+          titleText: "Ledger",
+          showbackArrow: true,
+        ),
+        floatingActionButton:
+            controller.rxledger.isEmpty ? null : _floatingButton(),
+        body: controller.rxledger.isEmpty ? _emptyContainer() : _buildBody(),
+      );
+    });
+  }
+
+  Padding _emptyContainer() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          appText(
+              "Easily track the money you lend and borrow, all in one place.",
+              color: AppColorHelper().primaryTextColor,
+              fontSize: 35,
+              fontWeight: FontWeight.w900),
+          Center(
+            child: Lottie.asset('assets/lottie/ledger.json',
+                fit: BoxFit.contain, repeat: false, height: 400, width: 400),
           ),
-        ),
-        icon: Icon(
-          Icons.add_rounded,
-          size: 26,
-          color: AppColorHelper().textColor,
-        ),
-        backgroundColor: AppColorHelper().primaryColor.withOpacity(0.8),
-        elevation: 2,
-        highlightElevation: 6,
-        splashColor: AppColorHelper().primaryColorLight.withOpacity(0.2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        extendedPadding:
-            const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+          height(5),
+          GestureDetector(
+            onTap: () async {
+              await showModalBottomSheet(
+                context: Get.context!,
+                isScrollControlled: true,
+                backgroundColor: AppColorHelper().backgroundColor,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                ),
+                builder: (context) => LedgerBottomsheet(),
+              );
+            },
+            child: Container(
+              height: 60,
+              width: 250,
+              decoration: BoxDecoration(
+                  color: AppColorHelper().primaryColor,
+                  borderRadius: BorderRadius.circular(15)),
+              child: Center(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  appText("Start Adding",
+                      color: AppColorHelper().textColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700),
+                  width(15),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: AppColorHelper().textColor,
+                  )
+                ],
+              )),
+            ),
+          )
+        ],
       ),
-      body: _buildBody(theme),
     );
   }
 
-  Widget _buildBody(ThemeData theme) {
+  FloatingActionButton _floatingButton() {
+    return FloatingActionButton.extended(
+      onPressed: () async {
+        await showModalBottomSheet(
+          context: Get.context!,
+          isScrollControlled: true,
+          backgroundColor: AppColorHelper().backgroundColor,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          builder: (context) => LedgerBottomsheet(),
+        );
+      },
+      label: Text(
+        "Add Entry",
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+          letterSpacing: 0.3,
+          color: AppColorHelper().textColor, // ensure good contrast
+        ),
+      ),
+      icon: Icon(
+        Icons.add_rounded,
+        size: 26,
+        color: AppColorHelper().textColor,
+      ),
+      backgroundColor: AppColorHelper().primaryColor.withOpacity(0.8),
+      elevation: 2,
+      highlightElevation: 6,
+      splashColor: AppColorHelper().primaryColorLight.withOpacity(0.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      extendedPadding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+    );
+  }
+
+  Widget _buildBody() {
+    bool isPositive = controller.isPositive();
     return RefreshIndicator(
       onRefresh: () async {},
       color: AppColorHelper().primaryColor,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.only(top: 16, bottom: 90),
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Obx(() {
-          bool isPositive = controller.isPositive();
-          return Column(
+          padding: const EdgeInsets.only(top: 16, bottom: 90),
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _summarySection(isPositive),
               _lendAndBorrowSection(),
               _sortedLedger()
             ],
-          );
-        }),
-      ),
+          )),
     );
   }
 
@@ -410,7 +471,6 @@ class LedgerScreen extends AppBaseView<HomeController> {
                       const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   decoration: BoxDecoration(
                     color: AppColorHelper().cardColor.withValues(alpha: 0.1),
-                   
                     border: isExpanded
                         ? Border.all(
                             color: AppColorHelper()
@@ -535,6 +595,27 @@ class LedgerScreen extends AppBaseView<HomeController> {
                                           : tx.description,
                                       color: AppColorHelper().primaryTextColor,
                                     ),
+                                    height(10),
+                                    tx.name.isEmpty
+                                        ? height(0)
+                                        : Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              appText(
+                                                "Asignee",
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColorHelper()
+                                                    .primaryTextColor,
+                                              ),
+                                              height(4),
+                                              appText(
+                                                tx.name,
+                                                color: AppColorHelper()
+                                                    .primaryTextColor,
+                                              ),
+                                            ],
+                                          ),
                                     height(10),
                                     Align(
                                       alignment: Alignment.centerRight,

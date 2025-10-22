@@ -52,10 +52,14 @@ dev_dependencies:
 
 
 flutter_native_splash:
-  color: "#081E21"
-  image: assets/images/kalyanLogowhite.png
+  color: "#9903BC91"
+  image: assets/LOGO.jpg
   android: true
   ios: true
+
+  android_12:
+    color: "#9903BC91"
+    image: assets/LOGO.jpg
 
 flutter:
 
@@ -81,7 +85,11 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/LOGO.jpg" # Fallback image
+
+  image_path: "assets/LOGO.jpg" # fallback (for older Android versions)
+  
+  adaptive_icon_background: "#03BC91"  # use your brand color here (not white)
+  adaptive_icon_foreground: "assets/LOGO.jpg"
   remove_alpha_ios: true
 
   

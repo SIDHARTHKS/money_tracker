@@ -59,7 +59,8 @@ class _IncomeBottomsheetState extends State<IncomeBottomsheet> {
     if (amount != null) {
       Navigator.pop(context, amount);
     } else {
-      showErrorSnackbar(message: "Please enter a valid amount");
+      // showErrorSnackbar(message: "");
+      Navigator.pop(context, amount);
     }
   }
 

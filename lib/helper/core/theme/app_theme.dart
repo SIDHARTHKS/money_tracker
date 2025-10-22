@@ -64,6 +64,7 @@ class AppTheme {
   final Color togglebgColor;
 
   final Color cardColor2;
+  final Color cardColor3;
   final Color pieColor;
   final Color pieBgColor;
 
@@ -82,6 +83,7 @@ class AppTheme {
   final Color billsColor;
   final Color rechargeColor;
   final Color savingsColor;
+  final Color missColor;
 
   final String fontFamily;
   final String imagePath; // Path to client-specific images
@@ -143,6 +145,7 @@ class AppTheme {
     required this.clearTextColor,
     required this.togglebgColor,
     required this.cardColor2,
+    required this.cardColor3,
     required this.pieColor,
     required this.pieBgColor,
     required this.expenseColor,
@@ -159,6 +162,7 @@ class AppTheme {
     required this.billsColor,
     required this.rechargeColor,
     required this.savingsColor,
+    required this.missColor,
   });
 }
 
@@ -244,6 +248,7 @@ AppTheme _demoDarkTheme() => AppTheme(
       togglebgColor: const Color.fromRGBO(218, 165, 32, 1),
 
       cardColor2: const Color.fromARGB(255, 236, 230, 252),
+      cardColor3: const Color.fromARGB(255, 192, 227, 97),
       pieColor: const Color.fromRGBO(136, 124, 168, 1),
       pieBgColor: const Color.fromARGB(255, 181, 181, 181),
 
@@ -255,17 +260,18 @@ AppTheme _demoDarkTheme() => AppTheme(
       transactionColor: const Color.fromARGB(255, 77, 39, 79),
       ledgerColor: const Color.fromARGB(255, 227, 125, 66),
 
-      //categories
-      foodColor: const Color(0xFF4DFFB2),
-      salaryColor: const Color(0xFF13EFFF),
-      fuelColor: const Color(0xFFFFCA39),
-      travelColor: const Color(0xFF875DF1),
-      homeRentColor: const Color(0xFFFF5EEF),
-      shoppingColor: const Color(0xFFF6FF4E),
-      moviesColor: const Color(0xFFE3FF67),
-      billsColor: const Color(0xFF3F4A50),
-      rechargeColor: const Color(0xFFFF3D3D),
-      savingsColor: const Color(0xFF6DFEDC),
+      // categories
+      foodColor: const Color.fromARGB(255, 182, 250, 93),
+      salaryColor: const Color.fromARGB(255, 92, 236, 255),
+      fuelColor: const Color.fromARGB(255, 239, 255, 96),
+      travelColor: const Color.fromARGB(255, 135, 81, 249),
+      homeRentColor: const Color.fromARGB(255, 255, 80, 139),
+      shoppingColor: const Color.fromARGB(255, 254, 160, 51),
+      moviesColor: const Color.fromARGB(255, 86, 111, 255),
+      billsColor: const Color(0xFFFF7043),
+      rechargeColor: const Color.fromARGB(255, 105, 42, 54),
+      savingsColor: const Color.fromARGB(255, 156, 255, 125),
+      missColor: const Color.fromARGB(255, 125, 188, 255),
 
       fontFamily: 'Roboto',
       imagePath: 'assets/images/demo.png',
@@ -342,6 +348,7 @@ AppTheme _demoLightTheme() => AppTheme(
       togglebgColor: const Color.fromRGBO(218, 165, 32, 1),
 
       cardColor2: const Color.fromARGB(255, 3, 173, 179),
+      cardColor3: const Color.fromARGB(255, 192, 227, 97),
       pieColor: const Color.fromRGBO(136, 124, 168, 1),
       pieBgColor: const Color.fromARGB(255, 181, 181, 181),
 
@@ -353,17 +360,18 @@ AppTheme _demoLightTheme() => AppTheme(
       transactionColor: const Color.fromARGB(255, 77, 39, 79),
       ledgerColor: const Color.fromARGB(255, 227, 125, 66),
 
-      //categories
-      foodColor: const Color(0xFF4DFFB2),
-      salaryColor: const Color(0xFF13EFFF),
-      fuelColor: const Color(0xFFFFCA39),
-      travelColor: const Color(0xFF875DF1),
-      homeRentColor: const Color(0xFFFF5EEF),
-      shoppingColor: const Color(0xFFF6FF4E),
-      moviesColor: const Color(0xFFE3FF67),
-      billsColor: const Color(0xFF3F4A50),
-      rechargeColor: const Color(0xFFFF3D3D),
-      savingsColor: const Color(0xFF6DFEDC),
+// categories
+      foodColor: const Color.fromARGB(255, 182, 250, 93),
+      salaryColor: const Color.fromARGB(255, 92, 236, 255),
+      fuelColor: const Color.fromARGB(255, 239, 255, 96),
+      travelColor: const Color.fromARGB(255, 135, 81, 249),
+      homeRentColor: const Color.fromARGB(255, 255, 80, 139),
+      shoppingColor: const Color.fromARGB(255, 254, 160, 51),
+      moviesColor: const Color.fromARGB(255, 86, 111, 255),
+      billsColor: const Color(0xFFFF7043),
+      rechargeColor: const Color.fromARGB(255, 105, 42, 54),
+      savingsColor: const Color.fromARGB(255, 156, 255, 125),
+      missColor: const Color.fromARGB(255, 125, 188, 255),
 
       fontFamily: 'Roboto',
       imagePath: 'assets/images/demo.png',

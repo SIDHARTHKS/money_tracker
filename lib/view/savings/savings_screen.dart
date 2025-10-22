@@ -6,6 +6,7 @@ import 'package:tracker/gen/assets.gen.dart';
 import 'package:tracker/helper/color_helper.dart';
 import 'package:tracker/helper/sizer.dart';
 import 'package:tracker/view/savings/savings_bottomsheet.dart';
+import 'package:tracker/view/widget/text/app_text.dart';
 import '../../helper/core/base/app_base_view.dart';
 import '../../helper/date_helper.dart';
 import '../widget/common_widget.dart';
@@ -16,15 +17,104 @@ class SavingsScreen extends AppBaseView<SavingsController> {
   @override
   Widget buildView() {
     final theme = Theme.of(Get.context!);
-    return appScaffold(
-        canpop: true,
-        extendBodyBehindAppBar: false,
-        appBar: appBar(
-          titleText: "Savings",
-          showbackArrow: true,
-        ),
-        body: _buildBody(theme),
-        bottomNavigationBar: _button());
+    return Obx(() {
+      return appScaffold(
+          canpop: true,
+          extendBodyBehindAppBar: false,
+          appBar: appBar(
+            titleText: "Savings",
+            showbackArrow: true,
+          ),
+          body: controller.savingsList.isEmpty
+              ? _emptyContainer()
+              : _buildBody(theme),
+          bottomNavigationBar:
+              controller.savingsList.isEmpty ? null : _button());
+    });
+  }
+
+  Padding _emptyContainer() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Every coin counts ... keep track of your ",
+                      style: textStyle(
+                        35,
+                        AppColorHelper().primaryTextColor,
+                        FontWeight.w900,
+                      ),
+                    ),
+                    TextSpan(
+                      text: "Savings",
+                      style: textStyle(
+                        35,
+                        AppColorHelper().primaryColor,
+                        FontWeight.w900,
+                      ),
+                    ),
+                    TextSpan(
+                      text: " with ease.",
+                      style: textStyle(
+                        35,
+                        AppColorHelper().primaryTextColor,
+                        FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.left, // important for multiline
+              ),
+            ),
+            Center(
+              child: Lottie.asset(
+                'assets/lottie/savings.json',
+                fit: BoxFit.contain,
+                repeat: false,
+                height: 400,
+                width: 400,
+              ),
+            ),
+            height(20),
+            GestureDetector(
+              onTap: () {
+                SavingsBottomsheet.show(Get.context!);
+              },
+              child: Container(
+                height: 60,
+                width: 250,
+                decoration: BoxDecoration(
+                  color: AppColorHelper().primaryColor,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    appText(
+                      "Add Savings",
+                      color: AppColorHelper().textColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    width(15),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: AppColorHelper().textColor,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 
   Widget _buildBody(ThemeData theme) {

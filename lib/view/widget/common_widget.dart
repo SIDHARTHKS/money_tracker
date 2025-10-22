@@ -136,6 +136,7 @@ AppBar appBar({
   }
 
   return AppBar(
+    scrolledUnderElevation: 0,
     systemOverlayStyle: SystemUiOverlayStyle(
       systemNavigationBarColor: AppColorHelper().tabbarBgClr,
       statusBarColor: AppColorHelper().transparentColor,
@@ -172,7 +173,7 @@ AppBar appBar({
 }
 
 customAppBar(String title, String subtitle, {VoidCallback? onTap}) => AppBar(
-      toolbarHeight: 100,
+      toolbarHeight: 70,
       backgroundColor: AppColorHelper().backgroundColor,
       titleSpacing: 0,
       title: Align(

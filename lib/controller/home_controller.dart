@@ -76,11 +76,15 @@ class HomeController extends AppBaseController
 
   //////////////////////////////////////////////////////////////////transactions
 
-  Future<void> loadAll() async {
-    // Load all transactions from Hive
-    final allTx = _txBox.values.toList();
-    // Sort all transactions by date (newest first)
-    allTx.sort((a, b) => b.date.compareTo(a.date));
+  Future<void> loadAll({DateTime? date}) async {
+    final now = date ?? DateTime.now();
+    final currentMonth = now.month;
+    final currentYear = now.year;
+    // Load all transactions from Hive and sort month
+    final allTx = _txBox.values
+        .where((tx) =>
+            tx.date.year == currentYear && tx.date.month == currentMonth)
+        .toList();
 
 // Group transactions by date
 //grouped = {
@@ -174,29 +178,50 @@ class HomeController extends AppBaseController
   ///////////////////////////////////////////////////////////salary
   ///
   ///
-  void load() {
+  Future<void> load({DateTime? date}) async {
     if (_salbox.isNotEmpty) {
       double total = 0.0;
-
+      final targetDate = date ?? DateTime.now();
       for (var entry in _salbox.values) {
-        total += entry.totalSalary;
+        if (entry.updatedAt.year == targetDate.year &&
+            entry.updatedAt.month == targetDate.month) {
+          total += entry.totalSalary;
+        }
       }
       salary.value = total;
     } else {
       salary.value = 0.0;
     }
-    salaryBox = _salbox;
-    // calculateAll();
   }
 
-  Future<void> setSalary(double total) async {
-    if (currentSalaryKey != null) {
-      await deleteSalary(currentSalaryKey!); // delete existing
+  Future<void> setSalary(double total, {DateTime? date}) async {
+    final targetDate = date ?? DateTime.now();
+
+    // Find existing salary for the month
+    int? existingKey;
+    for (var key in _salbox.keys) {
+      final s = _salbox.get(key);
+      if (s != null &&
+          s.updatedAt.year == targetDate.year &&
+          s.updatedAt.month == targetDate.month) {
+        existingKey = key as int;
+        break;
+      }
     }
-    final model = SalaryModel(totalSalary: total, updatedAt: DateTime.now());
-    final key = await _salbox.add(model);
-    currentSalaryKey = key;
-    load();
+
+    final model = SalaryModel(totalSalary: total, updatedAt: targetDate);
+
+    if (existingKey != null) {
+      // Update existing salary
+      await _salbox.put(existingKey, model);
+      currentSalaryKey = existingKey;
+    } else {
+      // Add new salary
+      final key = await _salbox.add(model);
+      currentSalaryKey = key;
+    }
+
+    await load(date: targetDate);
     calculateAll();
   }
 
@@ -347,6 +372,11 @@ class HomeController extends AppBaseController
       'icon': Icons.account_balance_wallet_outlined,
       'color': AppColorHelper().savingsColor,
     },
+    {
+      'name': 'Miscellaneous',
+      'icon': Icons.star,
+      'color': AppColorHelper().missColor,
+    },
   ];
 
   bool isPositive() {
@@ -357,53 +387,6 @@ class HomeController extends AppBaseController
     return rxledgerDifference >= 0;
   }
 
-  // Future<void> loadMonthData(DateTime month) async {
-  //   // Normalize month to YYYY-MM (ignore day)
-  //   final normalizedMonth = DateTime(month.year, month.month);
-
-  //   // ✅ Filter transactions for the selected month
-  //   final monthTxs = _txBox.values
-  //       .where((tx) =>
-  //           tx.date.year == normalizedMonth.year &&
-  //           tx.date.month == normalizedMonth.month)
-  //       .toList()
-  //     ..sort((a, b) => b.date.compareTo(a.date));
-
-  //   currentMonthTransactions.assignAll(monthTxs);
-
-  //   // ✅ Find salary for this month (if any)
-  //   final sal = _salbox.values.firstWhere(
-  //     (s) =>
-  //         s.month.year == normalizedMonth.year &&
-  //         s.month.month == normalizedMonth.month,
-  //     orElse: () => SalaryModel(totalSalary: 0.0, month: normalizedMonth),
-  //   );
-
-  //   currentMonthSalary.value = sal;
-
-  //   // ✅ Calculate monthly totals
-  //   calculateMonthlyTotals();
-  // }
-
-  // void calculateMonthlyTotals() {
-  //   double income = 0.0;
-  //   double expense = 0.0;
-
-  //   for (var tx in currentMonthTransactions) {
-  //     if (tx.type == "Income") {
-  //       income += tx.amount;
-  //     } else if (tx.type == "Expense") {
-  //       expense += tx.amount;
-  //     }
-  //   }
-
-  //   final goal = currentMonthSalary.value?.totalSalary ?? 0.0;
-
-  //   rxTotalincome.value = income;
-  //   rxTotalspend.value = expense;
-  //   rxTotalbalance.value = goal - expense;
-  // }
-
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -411,11 +394,12 @@ class HomeController extends AppBaseController
     // Open boxes first
     _txBox = Hive.box<TransactionModel>('transactions');
     _salbox = Hive.box<SalaryModel>('salaryBox');
+    salaryBox = Hive.box<SalaryModel>('salaryBox');
     _ledgerbox = Hive.box<LedgerModel>('ledger');
 
     // Load initial data
     await loadAll();
-    load();
+    await load();
     await loadAllLedger();
 
     // Watch for changes

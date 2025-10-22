@@ -52,9 +52,44 @@ class HomeScreen extends AppBaseView<HomeController> {
                     : height(0),
                 _transactionAndLedger(),
                 height(10),
-                controller.transactions.isNotEmpty
-                    ? _showAllButton()
-                    : height(0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 10),
+                        child: Container(
+                            height: 30,
+                            width: 115,
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: AppColorHelper()
+                                    .primaryColor
+                                    .withValues(alpha: 0.3)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: appText("Qick add",
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColorHelper().primaryColorDark),
+                                ),
+                                width(5),
+                                Icon(Icons.add,
+                                    size: 20,
+                                    color: AppColorHelper().primaryColorDark)
+                              ],
+                            )),
+                      ),
+                    ),
+                    controller.transactions.isNotEmpty
+                        ? _showAllButton()
+                        : height(0),
+                  ],
+                ),
                 _sortedTransactions()
               ],
             ),
@@ -188,27 +223,35 @@ class HomeScreen extends AppBaseView<HomeController> {
       height: 120,
       child: Row(
         children: [
-          fnButtons(
-              "Transaction",
-              "Add Transactions",
-              Assets.icons.transaction.path,
-              AppColorHelper().transactionColor, () async {
-            await showModalBottomSheet(
-              context: Get.context!,
-              isScrollControlled: true,
-              backgroundColor: AppColorHelper().cardColor,
-              constraints: BoxConstraints.expand(height: Get.height * 0.88),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
-              ),
-              builder: (context) => const TransactionBottomsheet(),
-            );
-          }),
-          width(10),
-          fnButtons("Ledger", "View Ledger", Assets.icons.arrowRight.path,
-              AppColorHelper().ledgerColor, () {
-            navigateTo(ledgerPageRoute);
-          })
+          controller.salary.value != 0.0
+              ? Flexible(
+                  child: fnButtons(
+                      "Transaction",
+                      "Add Transactions",
+                      Assets.icons.transaction.path,
+                      AppColorHelper().transactionColor, () async {
+                    await showModalBottomSheet(
+                      context: Get.context!,
+                      isScrollControlled: true,
+                      backgroundColor: AppColorHelper().cardColor,
+                      constraints:
+                          BoxConstraints.expand(height: Get.height * 0.88),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(40)),
+                      ),
+                      builder: (context) => const TransactionBottomsheet(),
+                    );
+                  }),
+                )
+              : width(0),
+          controller.salary.value != 0.0 ? width(10) : width(0),
+          Flexible(
+            child: fnButtons("Ledger", "View Ledger",
+                Assets.icons.arrowRight.path, AppColorHelper().ledgerColor, () {
+              navigateTo(ledgerPageRoute);
+            }),
+          )
         ],
       ),
     );
@@ -527,11 +570,12 @@ class HomeScreen extends AppBaseView<HomeController> {
                             ? controller.salary.value
                             : 0, // pre-fill existing salary
                       );
-
                       if (amount != null) {
                         await controller
                             .setSalary(amount); // will replace if exists
-                      } else if (controller.salary.value != 0.0) {
+                      } else if (amount == null) {
+                        await controller.setSalary(0.0);
+                      } else {
                         goBack(); // delete existing if canceled
                       }
                     },
@@ -648,7 +692,7 @@ class HomeScreen extends AppBaseView<HomeController> {
                     appText(
                       subtitle,
                       color: colorHelper.textColor,
-                      fontSize: 12,
+                      fontSize: controller.salary.value != 0.0 ? 11 : 16,
                       fontWeight: FontWeight.w700,
                     ),
                     Container(
