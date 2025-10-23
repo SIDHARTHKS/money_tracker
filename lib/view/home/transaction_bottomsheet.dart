@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tracker/controller/home_controller.dart';
+import 'package:tracker/helper/app_message.dart';
 import 'package:tracker/helper/color_helper.dart';
 import 'package:tracker/helper/date_helper.dart';
 import 'package:tracker/helper/sizer.dart';
 import 'package:tracker/model/transaction_model.dart';
 import 'package:tracker/view/widget/common_widget.dart';
+import 'package:tracker/view/widget/formatter/amount_formatter.dart';
 import 'package:tracker/view/widget/text/app_text.dart';
 
 class TransactionBottomsheet extends StatefulWidget {
@@ -90,6 +92,10 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
 
               /// 💰 Amount
               TextField(
+                inputFormatters: [
+                  AmountFormatter(
+                      maxDigitsBeforeDecimal: 8, maxDigitsAfterDecimal: 2),
+                ],
                 controller: amountController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
@@ -288,7 +294,7 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
   void _saveExpense() {
     final amount = double.tryParse(amountController.text);
     if (amount == null || amount <= 0) {
-      Get.snackbar("Invalid", "Please enter a valid amount");
+      showErrorSnackbar(message: "Please enter a valid amount");
       return;
     }
 

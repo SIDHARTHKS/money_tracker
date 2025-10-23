@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tracker/view/widget/text/app_text.dart';
+import 'package:hive/hive.dart';
+
 import '../view/widget/common_widget.dart';
 import 'app_string.dart';
 import 'color_helper.dart';
@@ -83,10 +84,18 @@ void showCustomSnackbar({
         Get.back();
         closePressed ?? ();
       },
-      child: appText(close.tr,
-          fontSize: 16,
-          color: AppColorHelper().textColor,
-          fontWeight: FontWeight.w800),
+      child: Container(
+        decoration: BoxDecoration(
+            color: AppColorHelper().primaryColor.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+          child: appText(close.tr,
+              fontSize: 16,
+              color: AppColorHelper().primaryTextColor,
+              fontWeight: FontWeight.w600),
+        ),
+      ),
     ),
   );
 }

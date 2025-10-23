@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:tracker/helper/app_message.dart';
+import 'package:tracker/helper/app_string.dart';
 import 'package:tracker/helper/date_helper.dart' show DateHelper;
 import 'package:tracker/model/transaction_model.dart';
 import '../gen/assets.gen.dart';
@@ -225,6 +227,15 @@ class HomeController extends AppBaseController
     calculateAll();
   }
 
+  bool isLarge(double value) {
+    final integerPart = value.truncate().abs();
+    if (integerPart < 7) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   Future<void> deleteSalary(int key) async {
     await _salbox.delete(key);
     currentSalaryKey = null;
@@ -390,6 +401,8 @@ class HomeController extends AppBaseController
   @override
   Future<void> onInit() async {
     super.onInit();
+    rxUserName.value = myApp.preferenceHelper!.getString(userNameKey) ?? '';
+    appLog("Loaded username: ${rxUserName.value}");
 
     // Open boxes first
     _txBox = Hive.box<TransactionModel>('transactions');

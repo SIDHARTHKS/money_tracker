@@ -7,7 +7,7 @@ const String userIdKey = 'userIdKey';
 const String profileDataKey = 'profileDataKey';
 const String fcmTokenKey = 'fcmTokenKey';
 const String sendFcmTokenKey = 'sendFcmTokenKey';
-
+const String userNameKey = 'userNameKey';
 const String userImgKey = 'userImgKey';
 const String personKey = 'personKey';
 const String personCodeKey = 'personCodeKey';

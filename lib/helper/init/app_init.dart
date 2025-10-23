@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tracker/model/savings_model.dart';
+import 'package:tracker/model/user_model.dart';
 import '../../model/ledger_model.dart';
 import '../../model/salary_model.dart';
 import '../../model/transaction_model.dart';
@@ -23,12 +24,15 @@ class AppInit {
     await Hive.initFlutter();
 
     // register adapters
+
     Hive.registerAdapter(TransactionModelAdapter());
     Hive.registerAdapter(LedgerModelAdapter());
     Hive.registerAdapter(SalaryModelAdapter());
     Hive.registerAdapter(SavingsModelAdapter());
+    // Hive.registerAdapter(UserModelAdapter());
 
     // open boxes
+    // await Hive.openBox<UserModel>('userBox');
     await Hive.openBox<TransactionModel>('transactions');
     await Hive.openBox<LedgerModel>('ledger');
     await Hive.openBox<SalaryModel>('salaryBox');

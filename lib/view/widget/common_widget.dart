@@ -767,10 +767,10 @@ Widget appText(String text,
     double? height}) {
   return Text(
     text,
-    style: GoogleFonts.roboto(
+    style: GoogleFonts.poppins(
         textStyle: TextStyle(
             decoration: TextDecoration.none,
-            fontFamily: "Roboto",
+            fontFamily: "Poppins",
             fontSize: fontSize,
             fontWeight: fontWeight,
             color: color,

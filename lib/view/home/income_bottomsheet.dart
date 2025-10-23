@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:tracker/helper/app_message.dart';
 import 'package:tracker/helper/color_helper.dart';
 import 'package:tracker/helper/sizer.dart';
 import 'package:tracker/model/salary_model.dart';
+import 'package:tracker/view/widget/formatter/amount_formatter.dart';
 import 'package:tracker/view/widget/text/app_text.dart';
 import '../widget/common_widget.dart';
 
@@ -59,7 +61,7 @@ class _IncomeBottomsheetState extends State<IncomeBottomsheet> {
     if (amount != null) {
       Navigator.pop(context, amount);
     } else {
-      // showErrorSnackbar(message: "");
+      showErrorSnackbar(message: "Enter a valid amount");
       Navigator.pop(context, amount);
     }
   }
@@ -69,6 +71,7 @@ class _IncomeBottomsheetState extends State<IncomeBottomsheet> {
     final colorHelper = AppColorHelper();
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    var previousAmnt = widget.initialValue;
 
     return Padding(
       padding: EdgeInsets.only(bottom: keyboardHeight),
@@ -125,6 +128,10 @@ class _IncomeBottomsheetState extends State<IncomeBottomsheet> {
                     colorHelper.primaryTextColor,
                     FontWeight.w500,
                   ),
+                  inputFormatters: [
+                    AmountFormatter(
+                        maxDigitsBeforeDecimal: 8, maxDigitsAfterDecimal: 2),
+                  ],
                   decoration: InputDecoration(
                     hintText: "Enter your goal",
                     hintStyle: TextStyle(
@@ -147,6 +154,7 @@ class _IncomeBottomsheetState extends State<IncomeBottomsheet> {
                     ),
                   ),
                 ),
+
                 height(26),
 
                 // Action buttons
@@ -164,7 +172,14 @@ class _IncomeBottomsheetState extends State<IncomeBottomsheet> {
                       borderColor: Colors.transparent,
                       width: 100,
                       height: 42,
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        final amount = double.tryParse(_controller.text.trim());
+                        if (widget.initialValue == amount) {
+                          Navigator.pop(context, amount);
+                        } else {
+                          Navigator.pop(context, previousAmnt);
+                        }
+                      },
                     ),
                     width(10),
                     buttonContainer(

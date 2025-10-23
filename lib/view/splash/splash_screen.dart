@@ -1,13 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import '../../controller/splash_controller.dart';
-import '../../helper/app_string.dart';
 import '../../helper/color_helper.dart';
 import '../../helper/core/base/app_base_view.dart';
-import '../../helper/core/environment/env.dart';
 import '../../helper/navigation.dart';
 import '../../helper/route.dart';
 import '../widget/common_widget.dart';
@@ -25,26 +21,15 @@ class SplashScreen extends AppBaseView<SplashController> {
           () => controller.fetchUserProfile(),
           (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // While loading, show loader
               return _loaderWidget();
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (snapshot.hasData) {
-              // Perform navigation in a microtask after build
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (controller.rxUpdateRequired.value) {
-                  _openAppUpdateDialog();
-                } else {
-                  Map<String, dynamic> arguments = {};
-                  if (snapshot.data == 1) {}
-                  navigateToAndRemoveAll(
-                    snapshot.data == 1 ? landingPageRoute : landingPageRoute,
-                    // snapshot.data == 1 ? homePageRoute : homePageRoute,
-                    arguments: arguments,
-                  );
-                }
+                navigateToAndRemoveAll(
+                  snapshot.data == 1 ? homePageRoute : landingPageRoute,
+                );
               });
-              // Show loader while navigating
               return _loaderWidget();
             } else {
               return _loaderWidget();
@@ -84,30 +69,4 @@ class SplashScreen extends AppBaseView<SplashController> {
           ),
         ),
       );
-
-  void _openAppUpdateDialog() {
-    showDialog(
-      context: Get.context!,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        Widget okButton = TextButton(
-          child: Text(ok.tr),
-          onPressed: () {
-            if (AppEnvironment.isAndroid()) {
-              SystemNavigator.pop();
-            } else if (AppEnvironment.isIos()) {
-              exit(0);
-            }
-          },
-        );
-        return AlertDialog(
-          title: Text(unSupportedAppVersionTitle.tr),
-          content: Text(updateAppDialogMsg.tr),
-          actions: [
-            okButton,
-          ],
-        );
-      },
-    );
-  }
 }

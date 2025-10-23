@@ -152,30 +152,32 @@ class $AssetsImagesGen {
   AssetGenImage get kalyanLogowhite =>
       const AssetGenImage('assets/images/kalyanLogowhite.png');
 
-  /// File path: assets/images/kalyanlogo.png
-  AssetGenImage get kalyanlogo =>
-      const AssetGenImage('assets/images/kalyanlogo.png');
-
   /// File path: assets/images/muzirisLogo.png
   AssetGenImage get muzirisLogo =>
       const AssetGenImage('assets/images/muzirisLogo.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [
-        background,
-        goldBg,
-        kalyanLogo,
-        kalyanLogowhite,
-        kalyanlogo,
-        muzirisLogo
-      ];
+  List<AssetGenImage> get values =>
+      [background, goldBg, kalyanLogo, kalyanLogowhite, muzirisLogo];
 }
 
 class $AssetsLottieGen {
   const $AssetsLottieGen();
 
+  /// File path: assets/lottie/landing.json
+  String get landing => 'assets/lottie/landing.json';
+
+  /// File path: assets/lottie/ledger.json
+  String get ledger => 'assets/lottie/ledger.json';
+
+  /// File path: assets/lottie/loading.json
+  String get loading => 'assets/lottie/loading.json';
+
   /// File path: assets/lottie/piggy.json
   String get piggy => 'assets/lottie/piggy.json';
+
+  /// File path: assets/lottie/savings.json
+  String get savings => 'assets/lottie/savings.json';
 
   /// File path: assets/lottie/waves.json
   String get waves => 'assets/lottie/waves.json';
@@ -184,12 +186,14 @@ class $AssetsLottieGen {
   String get waves2 => 'assets/lottie/waves2.json';
 
   /// List of all assets
-  List<String> get values => [piggy, waves, waves2];
+  List<String> get values =>
+      [landing, ledger, loading, piggy, savings, waves, waves2];
 }
 
 class Assets {
-  const Assets._();
+  Assets._();
 
+  static const AssetGenImage icon = AssetGenImage('assets/ICON.png');
   static const AssetGenImage logo = AssetGenImage('assets/LOGO.jpg');
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
@@ -197,7 +201,7 @@ class Assets {
   static const $AssetsLottieGen lottie = $AssetsLottieGen();
 
   /// List of all assets
-  static List<AssetGenImage> get values => [logo];
+  static List<AssetGenImage> get values => [icon, logo];
 }
 
 class AssetGenImage {
@@ -233,7 +237,7 @@ class AssetGenImage {
     bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
-    FilterQuality filterQuality = FilterQuality.medium,
+    FilterQuality filterQuality = FilterQuality.low,
     int? cacheWidth,
     int? cacheHeight,
   }) {

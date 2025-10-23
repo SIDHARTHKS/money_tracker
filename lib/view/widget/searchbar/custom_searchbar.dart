@@ -64,11 +64,11 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         decoration: InputDecoration(
           fillColor: AppColorHelper().backgroundColor,
           hintText: widget.hintText.tr,
-          hintStyle: textStyle(
-            isTablet ? 18 : 14,
-            AppColorHelper().primaryTextColor.withOpacity(0.5),
-            FontWeight.w400,
-          ),
+          hintStyle: TextStyle(
+              fontSize: isTablet ? 18 : 14,
+              color: AppColorHelper().primaryTextColor.withOpacity(0.5),
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.1),
           prefixIcon: null,
           // Padding(
           //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
