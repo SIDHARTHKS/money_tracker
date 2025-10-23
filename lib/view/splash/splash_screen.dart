@@ -10,7 +10,6 @@ import '../../helper/core/base/app_base_view.dart';
 import '../../helper/core/environment/env.dart';
 import '../../helper/navigation.dart';
 import '../../helper/route.dart';
-import '../../helper/sizer.dart';
 import '../widget/common_widget.dart';
 
 class SplashScreen extends AppBaseView<SplashController> {
@@ -39,7 +38,7 @@ class SplashScreen extends AppBaseView<SplashController> {
                   Map<String, dynamic> arguments = {};
                   if (snapshot.data == 1) {}
                   navigateToAndRemoveAll(
-                    snapshot.data == 1 ? homePageRoute : homePageRoute,
+                    snapshot.data == 1 ? landingPageRoute : landingPageRoute,
                     // snapshot.data == 1 ? homePageRoute : homePageRoute,
                     arguments: arguments,
                   );
@@ -59,7 +58,9 @@ class SplashScreen extends AppBaseView<SplashController> {
         enableSafeArea: false,
         child: Container(
           decoration: BoxDecoration(
-            color: AppColorHelper().primaryColor.withValues(alpha: 0.6),
+            color: AppColorHelper()
+                .primaryColor
+                .withValues(alpha: 0.6), /////////0.6
           ),
           child: Stack(
             fit: StackFit.expand,

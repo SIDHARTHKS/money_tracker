@@ -19,8 +19,6 @@ class HomeScreen extends AppBaseView<HomeController> {
 
   @override
   Widget buildView() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
-
     return appScaffold(
       canpop: true,
       extendBodyBehindAppBar: true,
@@ -35,64 +33,63 @@ class HomeScreen extends AppBaseView<HomeController> {
 
   Widget _buildBody() {
     return Obx(() {
-      return RefreshIndicator(
-        onRefresh: () async {
-          return;
-        },
-        child: appContainer(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // MonthSelectorWidget(
-                //   onMonthSelected: (date) {},
-                // ),
-                _moneyDetails(),
-                controller.rxTotalincome.value > 0
-                    ? _IncomeContainer()
-                    : height(0),
-                _transactionAndLedger(),
-                height(10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 10),
-                        child: Container(
-                            height: 30,
-                            width: 115,
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: AppColorHelper()
-                                    .primaryColor
-                                    .withValues(alpha: 0.3)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: appText("Qick add",
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColorHelper().primaryColorDark),
-                                ),
-                                width(5),
-                                Icon(Icons.add,
-                                    size: 20,
-                                    color: AppColorHelper().primaryColorDark)
-                              ],
-                            )),
-                      ),
-                    ),
-                    controller.transactions.isNotEmpty
-                        ? _showAllButton()
-                        : height(0),
-                  ],
-                ),
-                _sortedTransactions()
-              ],
-            ),
+      return appContainer(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // MonthSelectorWidget(
+              //   onMonthSelected: (date) {},
+              // ),
+              _moneyDetails(),
+              controller.rxTotalincome.value > 0
+                  ? _IncomeContainer()
+                  : height(0),
+              _transactionAndLedger(),
+              height(10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  controller.salary.value != 0.0
+                      ? GestureDetector(
+                          onTap: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 10),
+                            child: Container(
+                                height: 30,
+                                width: 115,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: AppColorHelper()
+                                        .primaryColor
+                                        .withValues(alpha: 0.3)),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: appText("Qick add",
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColorHelper()
+                                              .primaryColorDark),
+                                    ),
+                                    width(5),
+                                    Icon(Icons.add,
+                                        size: 20,
+                                        color:
+                                            AppColorHelper().primaryColorDark)
+                                  ],
+                                )),
+                          ),
+                        )
+                      : width(0),
+                  controller.transactions.isNotEmpty
+                      ? _showAllButton()
+                      : height(0),
+                ],
+              ),
+              _sortedTransactions()
+            ],
           ),
         ),
       );
