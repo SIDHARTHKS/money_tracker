@@ -38,7 +38,6 @@ class HomeScreen extends AppBaseView<HomeController> {
                 _moneyDetails(),
                 if (controller.rxTotalincome.value > 0) _incomeContainer(),
                 _transactionAndLedger(),
-                height(10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -124,7 +123,7 @@ class HomeScreen extends AppBaseView<HomeController> {
   Padding _incomeContainer() {
     final colorHelper = AppColorHelper();
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         width: Get.width,
@@ -168,7 +167,7 @@ class HomeScreen extends AppBaseView<HomeController> {
                   context: Get.context!,
                   isScrollControlled: true,
                   backgroundColor: colorHelper.cardColor,
-                  constraints: BoxConstraints.expand(height: Get.height * 0.88),
+                  constraints: BoxConstraints.expand(height: Get.height * 0.75),
                   shape: const RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(40)),
@@ -185,6 +184,92 @@ class HomeScreen extends AppBaseView<HomeController> {
             }),
           ),
         ],
+      ),
+    );
+  }
+
+  Expanded fnButtons(String title, String subtitle, String icon, Color clr,
+      VoidCallback onTap) {
+    final colorHelper = AppColorHelper();
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 130, // fixed height
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: clr,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // --- Title ---
+              appText(
+                title,
+                color: colorHelper.textColor,
+                fontSize: 16, // fixed font size
+                fontWeight: FontWeight.w700,
+              ),
+              height(12),
+
+              // --- Subtitle row ---
+              Container(
+                height: 45, // fixed height
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: colorHelper.cardColor.withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(
+                    color: colorHelper.primaryColor.withOpacity(0.05),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: appText(
+                        subtitle,
+                        color: colorHelper.textColor,
+                        fontSize: 12, // fixed font size
+                        fontWeight: FontWeight.w600,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: colorHelper.cardColor,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Image.asset(icon),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -361,78 +446,6 @@ class HomeScreen extends AppBaseView<HomeController> {
     );
   }
 
-  Expanded fnButtons(String title, String subtitle, String icon, Color clr,
-      VoidCallback onTap) {
-    final colorHelper = AppColorHelper();
-
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          height: 130,
-          width: Get.width * 0.45,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: clr,
-            border: Border.all(
-                color: colorHelper.primaryColor.withValues(alpha: 0.05)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              appText(title,
-                  color: colorHelper.textColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700),
-              height(18),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  color: colorHelper.cardColor.withValues(alpha: 0.3),
-                  border: Border.all(
-                      color: colorHelper.primaryColor.withValues(alpha: 0.05)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    appText(subtitle,
-                        color: colorHelper.textColor,
-                        fontSize: controller.salary.value != 0.0 ? 11 : 16,
-                        fontWeight: FontWeight.w700),
-                    Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorHelper.boxShadowColor
-                                .withValues(alpha: 0.10),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                            spreadRadius: 1,
-                          ),
-                        ],
-                        color: colorHelper.cardColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Image.asset(icon),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   GestureDetector _balanceCard() {
     return GestureDetector(
       onTap: () {
@@ -594,23 +607,6 @@ class HomeScreen extends AppBaseView<HomeController> {
                                   fontSize: 15,
                                   color: AppColorHelper().primaryTextColor,
                                 ),
-                                height(4),
-                                isToday
-                                    ? appText(
-                                        "Today",
-                                        fontSize: 13,
-                                        color: AppColorHelper()
-                                            .primaryTextColor
-                                            .withOpacity(0.6),
-                                      )
-                                    : appText(
-                                        DateHelper.convertDateTimeToString(
-                                            dateTime: tx.date),
-                                        fontSize: 13,
-                                        color: AppColorHelper()
-                                            .primaryTextColor
-                                            .withOpacity(0.6),
-                                      ),
                               ],
                             ),
                           ),
@@ -639,50 +635,53 @@ class HomeScreen extends AppBaseView<HomeController> {
                                         color: AppColorHelper()
                                             .borderColor
                                             .withOpacity(0.05)),
-                                    height(6),
-                                    appText(
-                                      "Description",
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColorHelper().primaryTextColor,
-                                    ),
-                                    height(4),
-                                    appText(
-                                      tx.description.isEmpty
-                                          ? "No description"
-                                          : tx.description,
-                                      color: AppColorHelper().primaryTextColor,
-                                    ),
+                                    tx.description != ""
+                                        ? Column(
+                                            children: [
+                                              height(6),
+                                              appText(
+                                                "Description",
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColorHelper()
+                                                    .primaryTextColor
+                                                    .withValues(alpha: 0.5),
+                                              ),
+                                              height(4),
+                                              appText(
+                                                tx.description,
+                                                color: AppColorHelper()
+                                                    .primaryTextColor
+                                                    .withValues(alpha: 0.5),
+                                              ),
+                                            ],
+                                          )
+                                        : height(0),
                                     height(10),
                                     Align(
                                       alignment: Alignment.centerRight,
-                                      child: FilledButton.icon(
-                                        onPressed: () => controller
-                                            .deleteTransaction(tx.key),
-                                        icon: Icon(
-                                          Icons.close,
-                                          size: 20,
-                                          color: AppColorHelper().errorColor,
-                                        ),
-                                        label: appText("Remove",
-                                            color: AppColorHelper().errorColor,
-                                            fontWeight: FontWeight.w500),
-                                        style: FilledButton.styleFrom(
-                                          side: BorderSide(
-                                            color: AppColorHelper()
-                                                .errorColor
-                                                .withValues(alpha: 0.1),
-                                            width:
-                                                1.5, // optional: border width
-                                          ),
-                                          backgroundColor: AppColorHelper()
-                                              .errorColor
-                                              .withValues(alpha: 0.1),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10, horizontal: 12),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
+                                      child: buttonContainer(
+                                        height: 35,
+                                        width: 100,
+                                        color: AppColorHelper().cardColor,
+                                        borderColor: AppColorHelper()
+                                            .errorBorderColor
+                                            .withValues(alpha: 0.6),
+                                        onPressed: () {
+                                          controller.deleteTransaction(tx.key);
+                                          controller.expandedIndexMap.clear();
+                                        },
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            appText(
+                                              "Remove",
+                                              fontSize: 10,
+                                              color: AppColorHelper()
+                                                  .errorColor
+                                                  .withValues(alpha: 0.6),
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),

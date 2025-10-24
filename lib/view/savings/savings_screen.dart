@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -16,7 +17,6 @@ class SavingsScreen extends AppBaseView<SavingsController> {
 
   @override
   Widget buildView() {
-    final theme = Theme.of(Get.context!);
     return Obx(() {
       return appScaffold(
           canpop: true,
@@ -25,9 +25,8 @@ class SavingsScreen extends AppBaseView<SavingsController> {
             titleText: "Savings",
             showbackArrow: true,
           ),
-          body: controller.savingsList.isEmpty
-              ? _emptyContainer()
-              : _buildBody(theme),
+          body:
+              controller.savingsList.isEmpty ? _emptyContainer() : _buildBody(),
           bottomNavigationBar:
               controller.savingsList.isEmpty ? null : _button());
     });
@@ -117,7 +116,7 @@ class SavingsScreen extends AppBaseView<SavingsController> {
         ));
   }
 
-  Widget _buildBody(ThemeData theme) {
+  Widget _buildBody() {
     return SingleChildScrollView(
       padding:
           const EdgeInsets.only(top: 16, bottom: 10, left: 10.0, right: 10.0),
@@ -130,7 +129,7 @@ class SavingsScreen extends AppBaseView<SavingsController> {
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
               itemCount: controller.savingsList.length,
               itemBuilder: (context, index) {
                 var saving = controller.savingsList[index];
@@ -140,7 +139,7 @@ class SavingsScreen extends AppBaseView<SavingsController> {
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 10),
+                        vertical: 8.0, horizontal: 0),
                     child: GestureDetector(
                       onTap: () {
                         if (isExpanded) {
@@ -154,9 +153,12 @@ class SavingsScreen extends AppBaseView<SavingsController> {
                         curve: Curves.easeInOut,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColorHelper()
-                              .primaryColor
-                              .withValues(alpha: 0.6),
+                          border: Border.all(
+                              color: AppColorHelper()
+                                  .borderColor
+                                  .withValues(alpha: 0.1)),
+                          color:
+                              AppColorHelper().cardColor.withValues(alpha: 0.6),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Column(
@@ -172,14 +174,18 @@ class SavingsScreen extends AppBaseView<SavingsController> {
                                       .formatTransactionDate(saving.date),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w800,
-                                  color: AppColorHelper().textColor,
+                                  color: AppColorHelper()
+                                      .primaryTextColor
+                                      .withValues(alpha: 0.5),
                                 ),
                                 const Spacer(),
                                 appText(
                                   "+ ${saving.amount}",
                                   fontSize: 25,
                                   fontWeight: FontWeight.w800,
-                                  color: AppColorHelper().textColor,
+                                  color: AppColorHelper()
+                                      .primaryColor
+                                      .withValues(alpha: 0.6),
                                 ),
                                 width(10)
                               ],
@@ -197,58 +203,56 @@ class SavingsScreen extends AppBaseView<SavingsController> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          height(20),
-                                          saving.note != ""
-                                              ? Image.asset(
-                                                  Assets.icons.star.path,
-                                                  width: 15,
-                                                  height: 15,
+                                          height(5),
+                                          Row(
+                                            children: [
+                                              Icon(CupertinoIcons.star_fill,
+                                                  size: 10,
                                                   color: AppColorHelper()
-                                                      .cardColor,
-                                                )
-                                              : height(0),
-                                          height(10),
-                                          appText(
-                                            saving.note ?? "No note",
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColorHelper().textColor,
+                                                      .primaryTextColor
+                                                      .withValues(alpha: 0.5)),
+                                              width(10),
+                                              Flexible(
+                                                child: appText(
+                                                  saving.note != ""
+                                                      ? saving.note!
+                                                      : "- -",
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: AppColorHelper()
+                                                      .primaryTextColor
+                                                      .withValues(alpha: 0.5),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           Align(
                                             alignment: Alignment.centerRight,
-                                            child: FilledButton.icon(
-                                              onPressed: () => controller
-                                                  .deleteSavings(saving.key),
-                                              icon: Icon(
-                                                Icons.close,
-                                                size: 20,
-                                                color:
-                                                    AppColorHelper().errorColor,
-                                              ),
-                                              label: appText("Remove",
-                                                  color: AppColorHelper()
-                                                      .errorColor,
-                                                  fontWeight: FontWeight.w600),
-                                              style: FilledButton.styleFrom(
-                                                side: BorderSide(
-                                                  color: AppColorHelper()
-                                                      .errorColor
-                                                      .withValues(alpha: 0.1),
-                                                  width:
-                                                      1.5, // optional: border width
-                                                ),
-                                                backgroundColor:
-                                                    AppColorHelper()
-                                                        .cardColor
-                                                        .withValues(alpha: 0.4),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 12),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
+                                            child: buttonContainer(
+                                              height: 35,
+                                              width: 100,
+                                              color: AppColorHelper().cardColor,
+                                              borderColor: AppColorHelper()
+                                                  .errorBorderColor
+                                                  .withValues(alpha: 0.6),
+                                              onPressed: () {
+                                                controller
+                                                    .deleteSavings(saving.key);
+                                                controller.expandedIndex.value =
+                                                    -1;
+                                              },
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  appText(
+                                                    "Remove",
+                                                    fontSize: 10,
+                                                    color: AppColorHelper()
+                                                        .errorColor
+                                                        .withValues(alpha: 0.6),
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           )
@@ -271,33 +275,35 @@ class SavingsScreen extends AppBaseView<SavingsController> {
     );
   }
 
-  Padding _button() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 50.0, left: 20),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 170,
-            child: ElevatedButton.icon(
-              onPressed: () => SavingsBottomsheet.show(Get.context!),
-              icon: const Icon(Icons.add_rounded, size: 24),
-              label: const Text("Add Savings"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColorHelper().primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+  Row _button() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 40.0, left: 15, right: 15),
+          child: GestureDetector(
+              onTap: () => SavingsBottomsheet.show(Get.context!),
+              child: Container(
+                  decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.35), // shadow color
+                          blurRadius: 50, // softness
+                          spreadRadius: 5, // size of shadow
+                          offset: const Offset(0, 0), // shadow position
+                        ),
+                      ],
+                      shape: BoxShape.circle,
+                      color: AppColorHelper().primaryColor),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Icon(
+                      CupertinoIcons.add,
+                      size: 35,
+                      color: AppColorHelper().textColor,
+                    ),
+                  ))),
+        ),
+      ],
     );
   }
 

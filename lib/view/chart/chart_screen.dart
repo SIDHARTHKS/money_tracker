@@ -28,50 +28,36 @@ class ChartScreen extends AppBaseView<TransactionsController> {
 
   Widget _buildBody() {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16.0),
-        child: Obx(() {
-          return Column(
-            children: [
-              _monthSelector(),
-              height(20),
-              controller.rxGraphData.value.isEmpty
-                  ? Column(
-                      children: [
-                        height(150),
-                        Lottie.asset(
-                          'assets/lottie/nodata.json',
-                          fit: BoxFit.contain,
-                          repeat: true,
-                          height: 400,
-                          width: 400,
-                        ),
-                        appText("No Data Available",
-                            color: AppColorHelper()
-                                .primaryTextColor
-                                .withValues(alpha: 0.5),
-                            fontWeight: FontWeight.w700,
-                            fontSize: 24)
-                      ],
-                    )
-                  : _chartCard(),
-            ],
-          );
-        }),
-      ),
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Obx(() {
+        return Column(
+          children: [
+            _monthSelectorCard(),
+            height(20),
+            controller.rxGraphData.value.isEmpty ? _emptyState() : _chartCard(),
+          ],
+        );
+      }),
     );
   }
 
-  Widget _monthSelector() {
+  /// Modern month selector with shadow and elevation
+  Widget _monthSelectorCard() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          border: Border.all(
-              color: AppColorHelper().borderColor.withValues(alpha: 0.1)),
           color: AppColorHelper().cardColor,
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: const Offset(0, 4),
+            )
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,21 +86,80 @@ class ChartScreen extends AppBaseView<TransactionsController> {
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: AppColorHelper().cardColor.withOpacity(0.15),
+          color: AppColorHelper().primaryColor.withOpacity(0.1),
         ),
         padding: const EdgeInsets.all(10),
-        child: Icon(icon, size: 22, color: AppColorHelper().primaryTextColor),
+        child: Icon(icon, size: 22, color: AppColorHelper().primaryColor),
       ),
     );
   }
 
-  Widget _chartCard() {
+  /// Empty state with Lottie animation and text
+  Widget _emptyState() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0),
-      child: CommonPieChart(
-        data: controller.rxGraphData.value,
-        total: controller.salary.value,
-        showPercentages: false,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          height(120),
+          Lottie.asset(
+            'assets/lottie/nodata.json',
+            fit: BoxFit.contain,
+            repeat: true,
+            height: 350,
+            width: 350,
+          ),
+          height(20),
+          appText(
+            "No Data Available",
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: AppColorHelper().primaryTextColor.withOpacity(0.5),
+          ),
+          height(10),
+          appText(
+            "Track your expenses to see a detailed breakdown here.",
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColorHelper().primaryTextColor.withOpacity(0.35),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Chart card with modern elevation and shadow
+  Widget _chartCard() {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            offset: const Offset(0, 0),
+            blurRadius: 100,
+          ),
+        ],
+        color: AppColorHelper().cardColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          CommonPieChart(
+            data: controller.rxGraphData.value,
+            total: controller.salary.value,
+            showPercentages: false,
+          ),
+          height(12),
+          Container(
+            height: 4,
+            width: 60,
+            decoration: BoxDecoration(
+              color: AppColorHelper().primaryColor.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          height(30),
+        ],
       ),
     );
   }

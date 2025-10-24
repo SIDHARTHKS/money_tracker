@@ -38,14 +38,7 @@ class CommonPieChart extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(35),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            offset: const Offset(0, 0),
-            blurRadius: 100,
-          ),
-        ],
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -108,7 +101,7 @@ class CommonPieChart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 20.0),
+                padding: const EdgeInsets.only(left: 15.0),
                 child: appText(
                   getPercentage(spent, total),
                   fontSize: 32,
@@ -117,7 +110,7 @@ class CommonPieChart extends StatelessWidget {
                       AppColorHelper().primaryTextColor.withValues(alpha: 0.7),
                 ),
               ),
-              height(4),
+              height(2),
               appText(
                 "Used",
                 fontSize: 12,
@@ -164,14 +157,15 @@ class CommonPieChart extends StatelessWidget {
                 child: appText(
                   category,
                   fontWeight: FontWeight.w600,
-                  color: AppColorHelper().primaryTextColor,
+                  color:
+                      AppColorHelper().primaryTextColor.withValues(alpha: 0.5),
                 ),
               ),
               appText(
                 "${amount.toStringAsFixed(0)} ₹",
                 fontWeight: FontWeight.w700,
                 fontSize: 15,
-                color: AppColorHelper().primaryTextColor.withValues(alpha: 0.7),
+                color: AppColorHelper().primaryTextColor.withValues(alpha: 0.5),
               ),
             ],
           ),

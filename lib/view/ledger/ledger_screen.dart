@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -17,7 +18,6 @@ class LedgerScreen extends AppBaseView<HomeController> {
 
   @override
   Widget buildView() {
-    final theme = Theme.of(Get.context!);
     return Obx(() {
       return appScaffold(
         canpop: true,
@@ -26,107 +26,11 @@ class LedgerScreen extends AppBaseView<HomeController> {
           titleText: "Ledger",
           showbackArrow: true,
         ),
-        floatingActionButton:
-            controller.rxledger.isEmpty ? null : _floatingButton(),
         body: controller.rxledger.isEmpty ? _emptyContainer() : _buildBody(),
+        bottomNavigationBar:
+            controller.rxledger.isEmpty ? null : _floatingButton(),
       );
     });
-  }
-
-  Padding _emptyContainer() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          appText(
-              "Easily track the money you lend and borrow, all in one place.",
-              color: AppColorHelper().primaryTextColor,
-              fontSize: 35,
-              fontWeight: FontWeight.w900),
-          Center(
-            child: Lottie.asset('assets/lottie/ledger.json',
-                fit: BoxFit.contain, repeat: false, height: 400, width: 400),
-          ),
-          height(5),
-          GestureDetector(
-            onTap: () async {
-              await showModalBottomSheet(
-                context: Get.context!,
-                isScrollControlled: true,
-                backgroundColor: AppColorHelper().backgroundColor,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-                ),
-                builder: (context) => LedgerBottomsheet(),
-              );
-            },
-            child: Container(
-              height: 60,
-              width: 250,
-              decoration: BoxDecoration(
-                  color: AppColorHelper().primaryColor,
-                  borderRadius: BorderRadius.circular(15)),
-              child: Center(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  appText("Start Adding",
-                      color: AppColorHelper().textColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.w700),
-                  width(15),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: AppColorHelper().textColor,
-                  )
-                ],
-              )),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  FloatingActionButton _floatingButton() {
-    return FloatingActionButton.extended(
-      onPressed: () async {
-        await showModalBottomSheet(
-          context: Get.context!,
-          isScrollControlled: true,
-          backgroundColor: AppColorHelper().backgroundColor,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          ),
-          builder: (context) => LedgerBottomsheet(),
-        );
-      },
-      label: Text(
-        "Add Entry",
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-          letterSpacing: 0.3,
-          color: AppColorHelper().textColor, // ensure good contrast
-        ),
-      ),
-      icon: Icon(
-        Icons.add_rounded,
-        size: 26,
-        color: AppColorHelper().textColor,
-      ),
-      backgroundColor: AppColorHelper().primaryColor.withOpacity(0.8),
-      elevation: 2,
-      highlightElevation: 6,
-      splashColor: AppColorHelper().primaryColorLight.withOpacity(0.2),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-      ),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      extendedPadding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-    );
   }
 
   Widget _buildBody() {
@@ -179,17 +83,10 @@ class LedgerScreen extends AppBaseView<HomeController> {
             padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
             child: Container(
               decoration: BoxDecoration(
+                border: Border.all(
+                    color: AppColorHelper().borderColor.withValues(alpha: 0.1)),
                 color: AppColorHelper().cardColor.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(15),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color:
-                //         AppColorHelper().boxShadowColor.withValues(alpha: 0.1),
-                //     blurRadius: 10,
-                //     spreadRadius: 2,
-                //     offset: const Offset(0, 0),
-                //   ),
-                // ],
               ),
               child: Padding(
                 padding:
@@ -348,84 +245,104 @@ class LedgerScreen extends AppBaseView<HomeController> {
   }
 
   Widget _fundSummaryWidget(Color bgclr, Color gradientClr, Color icnClr,
-      String Icon, double difference) {
+      String iconPath, double difference) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        child: Container(
-            height: 100,
-            width: Get.width,
-            decoration: BoxDecoration(
-                color: bgclr,
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: AppColorHelper().boxShadowColor.withOpacity(0.15),
-                //     blurRadius: 10,
-                //     offset: const Offset(0, 4),
-                //   ),
-                // ],
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    gradientClr.withValues(alpha: 0.6),
-                    gradientClr.withValues(alpha: 0.5),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(25)),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Container(
+        height: 110, // slightly taller for modern spacing
+        width: Get.width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              gradientClr.withOpacity(0.5),
+              gradientClr.withOpacity(0.4),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
+          ],
+          color: bgclr,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Icon + Value Column
+              Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(5),
-                    width: 250,
-                    height: 85,
+                    height: 80,
+                    width: 80,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color:
-                            AppColorHelper().cardColor.withValues(alpha: 0.1)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          height: 80,
-                          width: 70,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(18),
-                              color: AppColorHelper()
-                                  .cardColor
-                                  .withValues(alpha: 0.7)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Image.asset(
-                              Icon,
-                              color: icnClr,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 30.0),
-                          child: appText(difference.toString(),
-                              fontSize: 25,
-                              fontWeight: FontWeight.w700,
-                              color: AppColorHelper().textColor),
+                      borderRadius: BorderRadius.circular(18),
+                      color: AppColorHelper().cardColor.withOpacity(0.7),
+                      boxShadow: [
+                        BoxShadow(
+                          color: icnClr.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Image.asset(
+                        iconPath,
+                        color: icnClr,
+                      ),
+                    ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: appText("Overview",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: AppColorHelper().textColor),
+                  width(30),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      appText(
+                        "₹ ${difference.toStringAsFixed(0)}",
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: AppColorHelper().textColor,
+                      ),
+                      const SizedBox(height: 4),
+                      appText(
+                        "Balance",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColorHelper().textColor.withOpacity(0.6),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            )));
+
+              // Overview Label
+              // Container(
+              //   padding:
+              //       const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              //   decoration: BoxDecoration(
+              //     color: AppColorHelper().cardColor.withOpacity(0.15),
+              //     borderRadius: BorderRadius.circular(18),
+              //   ),
+              //   child: appText(
+              //     "Overview",
+              //     fontSize: 16,
+              //     fontWeight: FontWeight.w600,
+              //     color: AppColorHelper().primaryTextColor,
+              //   ),
+              // ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   ListView _ledgerList(List<LedgerModel> ledger, {required int parentIndex}) {
@@ -491,42 +408,26 @@ class LedgerScreen extends AppBaseView<HomeController> {
                               height: 48,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: islend
-                                          ? AppColorHelper()
-                                              .lendColor
-                                              .withValues(alpha: 0.1)
-                                          : AppColorHelper()
-                                              .borrowColor
-                                              .withValues(alpha: 0.1),
-                                      blurRadius: 10,
-                                      spreadRadius:
-                                          2, // 👈 adds uniform shadow spread
-                                      offset: const Offset(
-                                          0, 0), // 👈 centers the shadow evenly
-                                    ),
-                                  ],
                                   color: islend
                                       ? AppColorHelper()
-                                          .cardColor
-                                          .withValues(alpha: 0.4)
+                                          .lendColor
+                                          .withValues(alpha: 0.6)
                                       : AppColorHelper()
-                                          .cardColor
-                                          .withValues(alpha: 0.4)),
+                                          .borrowColor
+                                          .withValues(alpha: 0.6)),
                               child: islend
                                   ? Padding(
                                       padding: const EdgeInsets.all(15.0),
                                       child: Image.asset(
                                         Assets.icons.lend.path,
-                                        color: AppColorHelper().lendColor,
+                                        color: AppColorHelper().textColor,
                                       ),
                                     )
                                   : Padding(
                                       padding: const EdgeInsets.all(15.0),
                                       child: Image.asset(
                                         Assets.icons.borrow.path,
-                                        color: AppColorHelper().borrowColor,
+                                        color: AppColorHelper().textColor,
                                       ),
                                     )),
                           width(12),
@@ -535,22 +436,14 @@ class LedgerScreen extends AppBaseView<HomeController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                isToday
-                                    ? appText(
-                                        "Today",
-                                        fontSize: 13,
-                                        color: AppColorHelper()
-                                            .primaryTextColor
-                                            .withOpacity(0.6),
-                                      )
-                                    : appText(
-                                        DateHelper.convertDateTimeToString(
-                                            dateTime: tx.date),
-                                        fontSize: 13,
-                                        color: AppColorHelper()
-                                            .primaryTextColor
-                                            .withOpacity(0.6),
-                                      ),
+                                appText(
+                                  tx.name != "" ? tx.name : "**",
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColorHelper()
+                                      .primaryTextColor
+                                      .withOpacity(0.5),
+                                )
                               ],
                             ),
                           ),
@@ -579,74 +472,59 @@ class LedgerScreen extends AppBaseView<HomeController> {
                                         color: AppColorHelper()
                                             .borderColor
                                             .withOpacity(0.05)),
-                                    height(6),
-                                    appText(
-                                      "Description",
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColorHelper().primaryTextColor,
-                                    ),
-                                    height(4),
-                                    appText(
-                                      tx.description.isEmpty
-                                          ? "No description"
-                                          : tx.description,
-                                      color: AppColorHelper().primaryTextColor,
-                                    ),
-                                    height(10),
-                                    tx.name.isEmpty
+                                    tx.description.isEmpty
                                         ? height(0)
                                         : Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
+                                              height(6),
                                               appText(
-                                                "Asignee",
+                                                "Description",
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColorHelper()
-                                                    .primaryTextColor,
+                                                    .primaryTextColor
+                                                    .withValues(alpha: 0.5),
                                               ),
                                               height(4),
                                               appText(
-                                                tx.name,
+                                                tx.description,
                                                 color: AppColorHelper()
-                                                    .primaryTextColor,
+                                                    .borderColor
+                                                    .withOpacity(0.5),
                                               ),
                                             ],
                                           ),
-                                    height(10),
                                     Align(
                                       alignment: Alignment.centerRight,
-                                      child: FilledButton.icon(
-                                        onPressed: () =>
-                                            controller.deleteLedger(tx.key),
-                                        icon: Icon(
-                                          Icons.close,
-                                          size: 20,
-                                          color: AppColorHelper().errorColor,
-                                        ),
-                                        label: appText("Remove",
-                                            color: AppColorHelper().errorColor,
-                                            fontWeight: FontWeight.w500),
-                                        style: FilledButton.styleFrom(
-                                          side: BorderSide(
-                                            color: AppColorHelper()
-                                                .errorColor
-                                                .withValues(alpha: 0.1),
-                                            width:
-                                                1.5, // optional: border width
-                                          ),
-                                          backgroundColor: AppColorHelper()
-                                              .errorColor
-                                              .withValues(alpha: 0.1),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10, horizontal: 12),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
+                                      child: buttonContainer(
+                                        height: 35,
+                                        width: 100,
+                                        color: AppColorHelper()
+                                            .errorColor
+                                            .withValues(alpha: 0.1),
+                                        borderColor: AppColorHelper()
+                                            .errorBorderColor
+                                            .withValues(alpha: 0.6),
+                                        onPressed: () {
+                                          controller.deleteLedger(tx.key);
+                                          controller.expandedIndexMap.clear();
+                                        },
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            appText(
+                                              "Remove",
+                                              fontSize: 10,
+                                              color: AppColorHelper()
+                                                  .errorColor
+                                                  .withValues(alpha: 0.6),
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
+                                    )
                                   ],
                                 ),
                               )
@@ -660,6 +538,106 @@ class LedgerScreen extends AppBaseView<HomeController> {
           );
         });
       },
+    );
+  }
+
+  Padding _floatingButton() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 40.0, left: 15, right: 15),
+      child: Row(
+        children: [
+          GestureDetector(
+              onTap: () async {
+                await showModalBottomSheet(
+                  context: Get.context!,
+                  isScrollControlled: true,
+                  backgroundColor: AppColorHelper().backgroundColor,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(28)),
+                  ),
+                  builder: (context) => LedgerBottomsheet(),
+                );
+              },
+              child: Container(
+                  decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.35), // shadow color
+                          blurRadius: 50, // softness
+                          spreadRadius: 5, // size of shadow
+                          offset: const Offset(0, 0), // shadow position
+                        ),
+                      ],
+                      shape: BoxShape.circle,
+                      color: AppColorHelper().primaryColor),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Icon(
+                      CupertinoIcons.add,
+                      size: 35,
+                      color: AppColorHelper().textColor,
+                    ),
+                  ))),
+        ],
+      ),
+    );
+  }
+
+  Padding _emptyContainer() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          appText(
+              "Easily track the money you lend and borrow, all in one place.",
+              color: AppColorHelper().primaryTextColor,
+              fontSize: 35,
+              fontWeight: FontWeight.w900),
+          Center(
+            child: Lottie.asset('assets/lottie/ledger.json',
+                fit: BoxFit.contain, repeat: false, height: 400, width: 400),
+          ),
+          height(5),
+          GestureDetector(
+            onTap: () async {
+              await showModalBottomSheet(
+                context: Get.context!,
+                isScrollControlled: true,
+                backgroundColor: AppColorHelper().backgroundColor,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                ),
+                builder: (context) => LedgerBottomsheet(),
+              );
+            },
+            child: Container(
+              height: 60,
+              width: 250,
+              decoration: BoxDecoration(
+                  color: AppColorHelper().primaryColor,
+                  borderRadius: BorderRadius.circular(15)),
+              child: Center(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  appText("Start Adding",
+                      color: AppColorHelper().textColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700),
+                  width(15),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: AppColorHelper().textColor,
+                  )
+                ],
+              )),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

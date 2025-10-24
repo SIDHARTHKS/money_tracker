@@ -36,11 +36,13 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
   final TextEditingController descriptionController = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String? selectedCategory;
+  RxBool rxExpanded = false.obs;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    selectedCategory = 'Miscellaneous'; // 👈 Default selection
+    selectedCategory = 'Miscellaneous';
   }
 
   @override
@@ -51,154 +53,211 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
     final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: keyboardHeight),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            decoration: BoxDecoration(
-              color: colorHelper.cardColor.withOpacity(0.95),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(28)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 16,
-                  offset: const Offset(0, -3),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // top handle
-                      Center(
-                        child: Container(
-                          width: 36,
-                          height: 4,
-                          margin: const EdgeInsets.only(bottom: 22),
-                          decoration: BoxDecoration(
-                            color:
-                                colorHelper.primaryTextColor.withOpacity(0.25),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-
-                      // Header
-                      Center(
-                        child: appText(
-                          "Add ${type == 'Expense' ? 'Expense' : 'Income'}",
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: colorHelper.primaryTextColor,
-                        ),
-                      ),
-                      height(18),
-
-                      // Expense / Income switch
-                      Center(
-                        child: Container(
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                            color: colorHelper.backgroundColor.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Expanded(
-                                child: _buildTypeChip(
-                                    'Expense', colorHelper.borrowColor),
-                              ),
-                              width(8),
-                              Expanded(
-                                  child: _buildTypeChip(
-                                      'Income', colorHelper.lendColor)),
-                            ],
-                          ),
-                        ),
-                      ),
-                      height(25),
-
-                      // Amount input
-                      TextField(
-                        inputFormatters: [
-                          AmountFormatter(
-                              maxDigitsBeforeDecimal: 8,
-                              maxDigitsAfterDecimal: 2),
-                        ],
-                        controller: amountController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        decoration: _inputDecoration(
-                          "Amount",
-                          prefixIcon: Icons.currency_rupee_rounded,
-                          colorHelper: colorHelper,
-                        ),
-                      ),
-                      height(20),
-
-                      // Category
-                      appText("Category",
-                          fontWeight: FontWeight.w600,
-                          color: colorHelper.primaryTextColor),
-                      height(10),
-                      _categorySelector(),
-
-                      height(25),
-                      appText("Select Date",
-                          fontWeight: FontWeight.w600,
-                          color: colorHelper.primaryTextColor),
-                      height(8),
-                      _calendar(firstDayOfMonth, lastDayOfMonth),
-
-                      height(25),
-
-                      // Description
-                      TextField(
-                        controller: descriptionController,
-                        decoration: _inputDecoration(
-                          "Description (Optional)",
-                          prefixIcon: Icons.note_outlined,
-                          colorHelper: colorHelper,
-                        ),
-                        maxLines: 2,
-                      ),
-                      height(30),
-
-                      // Save button
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: SizedBox(
-                          width: 150,
-                          child: buttonContainer(
-                            appText(
-                              type == 'Expense'
-                                  ? "Save Expense"
-                                  : "Save Income",
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        FocusScope.of(Get.context!).unfocus();
+        setState(() {
+          rxExpanded.value = false;
+        });
+      },
+      child: Padding(
+        padding: EdgeInsets.only(bottom: keyboardHeight),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: colorHelper.cardColor.withOpacity(0.95),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(28)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.25),
+                    blurRadius: 16,
+                    offset: const Offset(0, -3),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, bottom: 18, top: 12),
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // top handle
+                        Center(
+                          child: Container(
+                            width: 36,
+                            height: 4,
+                            margin: const EdgeInsets.only(bottom: 22),
+                            decoration: BoxDecoration(
+                              color: colorHelper.primaryTextColor
+                                  .withOpacity(0.25),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            color: type == 'Expense'
-                                ? AppColorHelper().expenseColor
-                                : AppColorHelper().lendColor,
-                            onPressed: _onSavePressed,
                           ),
                         ),
-                      ),
-                      height(8),
-                    ],
+
+                        // Header
+                        Center(
+                          child: appText(
+                            "Add ${type == 'Expense' ? 'Expense' : 'Income'}",
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: colorHelper.primaryTextColor,
+                          ),
+                        ),
+                        height(18),
+
+                        // Expense / Income switch
+                        Center(
+                          child: Container(
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                              color:
+                                  colorHelper.backgroundColor.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Expanded(
+                                  child: _buildTypeChip(
+                                      'Expense', colorHelper.borrowColor),
+                                ),
+                                width(8),
+                                Expanded(
+                                    child: _buildTypeChip(
+                                        'Income', colorHelper.lendColor)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        height(25),
+
+                        // Amount input
+                        TextField(
+                          inputFormatters: [
+                            AmountFormatter(
+                                maxDigitsBeforeDecimal: 8,
+                                maxDigitsAfterDecimal: 2),
+                          ],
+                          controller: amountController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          decoration: _inputDecoration(
+                            "Amount",
+                            prefixIcon: Icons.currency_rupee_rounded,
+                            colorHelper: colorHelper,
+                          ),
+                        ),
+                        height(20),
+
+                        // Category
+                        appText("Category",
+                            fontWeight: FontWeight.w600,
+                            color: colorHelper.primaryTextColor),
+                        height(10),
+                        _categorySelector(),
+
+                        height(25),
+                        appText("Date",
+                            fontWeight: FontWeight.w600,
+                            color: colorHelper.primaryTextColor),
+                        height(8),
+
+                        GestureDetector(
+                          onTap: () async {
+                            setState(() {
+                              rxExpanded.value = !rxExpanded.value;
+                            });
+
+                            // ✅ Wait for the animation and layout update to finish
+                            if (rxExpanded.value) {
+                              await Future.delayed(const Duration(
+                                  milliseconds: 250)); // Wait for AnimatedSize
+                              if (mounted) {
+                                _scrollController.animateTo(
+                                  _scrollController.position.maxScrollExtent,
+                                  duration: const Duration(milliseconds: 350),
+                                  curve: Curves.easeOut,
+                                );
+                              }
+                            }
+                          },
+                          child: AnimatedSize(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            child: Container(
+                              width: rxExpanded.value ? Get.width : 140,
+                              decoration: BoxDecoration(
+                                  color: AppColorHelper().backgroundColor,
+                                  borderRadius: rxExpanded.value
+                                      ? BorderRadius.circular(18)
+                                      : BorderRadius.circular(12)),
+                              child: rxExpanded.value
+                                  ? _calendar(firstDayOfMonth, lastDayOfMonth)
+                                  : Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 10),
+                                        child: appText(
+                                            DateHelper().formatTransactionDate(
+                                                selectedDate),
+                                            fontWeight: FontWeight.w600,
+                                            color:
+                                                colorHelper.primaryTextColor),
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ),
+
+                        height(25),
+
+                        // Description
+                        TextField(
+                          controller: descriptionController,
+                          decoration: _inputDecoration(
+                            "Description (Optional)",
+                            prefixIcon: Icons.note_outlined,
+                            colorHelper: colorHelper,
+                          ),
+                          maxLines: 1,
+                        ),
+                        height(30),
+
+                        // Save button
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            width: 150,
+                            child: buttonContainer(
+                              appText(
+                                type == 'Expense'
+                                    ? "Save Expense"
+                                    : "Save Income",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              color: type == 'Expense'
+                                  ? AppColorHelper().expenseColor
+                                  : AppColorHelper().lendColor,
+                              onPressed: _onSavePressed,
+                            ),
+                          ),
+                        ),
+                        height(8),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -232,7 +291,7 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
 
   Widget _categorySelector() {
     return SizedBox(
-      height: 90,
+      height: 75,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: categoryIcons.length,
@@ -249,7 +308,7 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 220),
-              width: isSelected ? 165 : 75,
+              width: isSelected ? 165 : 72,
               decoration: BoxDecoration(
                 color:
                     isSelected ? cat['color'] : cat['color'].withOpacity(0.4),
@@ -273,7 +332,7 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
                   height(5),
                   appText(
                     cat['name'],
-                    fontSize: 11,
+                    fontSize: 8,
                     fontWeight: FontWeight.w400,
                     color: AppColorHelper().primaryTextColor,
                   ),
@@ -289,7 +348,7 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
   Widget _calendar(DateTime firstDay, DateTime lastDay) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColorHelper().backgroundColor.withOpacity(0.25),
+        color: AppColorHelper().backgroundColor.withOpacity(0.9),
         borderRadius: BorderRadius.circular(18),
       ),
       child: TableCalendar(
@@ -297,7 +356,10 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
         lastDay: lastDay,
         focusedDay: selectedDate,
         selectedDayPredicate: (day) => DateHelper.isSameDate(day, selectedDate),
-        onDaySelected: (selected, _) => setState(() => selectedDate = selected),
+        onDaySelected: (selected, _) => setState(() {
+          selectedDate = selected;
+          rxExpanded.value = !rxExpanded.value;
+        }),
         availableGestures: AvailableGestures.none,
         headerStyle: HeaderStyle(
           titleCentered: true,
@@ -335,9 +397,9 @@ class _TransactionBottomSheetState extends State<TransactionBottomsheet> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Neutral adaptive background (not dependent on expense/income color)
-    final neutralBg = isDark
-        ? colorHelper.primaryColorDark.withOpacity(0.1)
-        : colorHelper.primaryColorLight.withOpacity(0.07);
+    final neutralBg = type == 'Expense'
+        ? colorHelper.borrowColor.withOpacity(0.05)
+        : colorHelper.lendColor.withOpacity(0.07);
 
     final focusColor =
         type == 'Expense' ? colorHelper.borrowColor : colorHelper.lendColor;
