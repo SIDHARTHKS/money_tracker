@@ -7,7 +7,7 @@ import 'tracker_app.dart';
 
 void main() async {
   AppEnvironment.setEnv(Environment.PROD);
-  AppEnvironment.setClient(AppClient.kalyan);
+  AppEnvironment.setClient(AppClient.sid);
   await AppInit().mainInit();
   runApp(const TrackerApp());
 }

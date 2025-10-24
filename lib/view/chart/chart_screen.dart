@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tracker/controller/transactions_controller.dart';
 import 'package:tracker/helper/color_helper.dart';
 import 'package:tracker/helper/date_helper.dart';
@@ -13,8 +14,6 @@ class ChartScreen extends AppBaseView<TransactionsController> {
 
   @override
   Widget buildView() {
-    final theme = Theme.of(Get.context!);
-
     return appScaffold(
       canpop: true,
       extendBodyBehindAppBar: false,
@@ -23,21 +22,39 @@ class ChartScreen extends AppBaseView<TransactionsController> {
         titleText: "Expense Breakdown",
         showbackArrow: true,
       ),
-      body: _buildBody(theme),
+      body: _buildBody(),
     );
   }
 
-  Widget _buildBody(ThemeData theme) {
+  Widget _buildBody() {
     return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        padding: const EdgeInsets.only(top: 16.0),
         child: Obx(() {
           return Column(
             children: [
-              _monthSelector(theme),
+              _monthSelector(),
               height(20),
-              _chartCard(theme),
+              controller.rxGraphData.value.isEmpty
+                  ? Column(
+                      children: [
+                        height(150),
+                        Lottie.asset(
+                          'assets/lottie/nodata.json',
+                          fit: BoxFit.contain,
+                          repeat: true,
+                          height: 400,
+                          width: 400,
+                        ),
+                        appText("No Data Available",
+                            color: AppColorHelper()
+                                .primaryTextColor
+                                .withValues(alpha: 0.5),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 24)
+                      ],
+                    )
+                  : _chartCard(),
             ],
           );
         }),
@@ -45,13 +62,15 @@ class ChartScreen extends AppBaseView<TransactionsController> {
     );
   }
 
-  Widget _monthSelector(ThemeData theme) {
+  Widget _monthSelector() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColorHelper().cardColor3.withValues(alpha: 0.7),
+          border: Border.all(
+              color: AppColorHelper().borderColor.withValues(alpha: 0.1)),
+          color: AppColorHelper().cardColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -64,7 +83,7 @@ class ChartScreen extends AppBaseView<TransactionsController> {
               DateHelper().formatMonthYear(controller.selectedDate),
               fontWeight: FontWeight.w800,
               fontSize: 18,
-              color: theme.colorScheme.onPrimaryContainer,
+              color: AppColorHelper().primaryTextColor,
             ),
             _monthArrow(Icons.arrow_forward_ios_rounded, () {
               controller.changeMonth(true);
@@ -89,10 +108,9 @@ class ChartScreen extends AppBaseView<TransactionsController> {
     );
   }
 
-  Widget _chartCard(ThemeData theme) {
-    return SizedBox(
-      width: Get.width,
-      height: Get.height,
+  Widget _chartCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       child: CommonPieChart(
         data: controller.rxGraphData.value,
         total: controller.salary.value,

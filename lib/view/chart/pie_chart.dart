@@ -53,13 +53,13 @@ class CommonPieChart extends StatelessWidget {
           children: [
             appText(
               "Spending Overview",
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               fontSize: 20,
               color: AppColorHelper().primaryTextColor,
             ),
             height(45),
             _buildPieChart(theme, spent, unspent),
-            height(35),
+            height(40),
             _buildLegend(),
           ],
         ),

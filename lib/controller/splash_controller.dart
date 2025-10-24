@@ -10,6 +10,7 @@ class SplashController extends AppBaseController {
   SharedPreferenceHelper? _preference;
 
   Future<int> fetchUserProfile() async {
+    await Future.delayed(Duration(milliseconds: 2000));
     _preference = myApplication.preferenceHelper;
     appLog(_preference!.getString(userNameKey));
     bool isLoggedIn = (myApp.preferenceHelper != null &&

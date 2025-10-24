@@ -223,13 +223,13 @@ class LedgerScreen extends AppBaseView<HomeController> {
       decoration: BoxDecoration(
         color: color ?? AppColorHelper().cardColor,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black.withOpacity(0.1),
+        //     blurRadius: 10,
+        //     offset: const Offset(0, 4),
+        //   ),
+        // ],
       ),
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: child,
@@ -294,6 +294,8 @@ class LedgerScreen extends AppBaseView<HomeController> {
   }) {
     return Container(
       decoration: BoxDecoration(
+        border: Border.all(
+            color: AppColorHelper().borderColor.withValues(alpha: 0.1)),
         gradient: gradient,
         borderRadius: BorderRadius.circular(20),
       ),
@@ -305,7 +307,7 @@ class LedgerScreen extends AppBaseView<HomeController> {
             height: 50,
             padding: EdgeInsets.all(5),
             decoration: BoxDecoration(
-                color: AppColorHelper().cardColor,
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16)),
             child: Row(
               children: [
@@ -314,20 +316,18 @@ class LedgerScreen extends AppBaseView<HomeController> {
                   height: 44,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
+                    color: color.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Image.asset(icon, color: color),
                 ),
                 width(10),
                 Expanded(
-                  child: Text(
+                  child: appText(
                     title,
-                    style: TextStyle(
-                      color: AppColorHelper().primaryTextColor,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    color: AppColorHelper().primaryTextColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -335,14 +335,11 @@ class LedgerScreen extends AppBaseView<HomeController> {
           ),
           const SizedBox(height: 14),
           Center(
-            child: Text(
+            child: appText(
               "$rupeeEmoji ${amount.toStringAsFixed(0)}",
-              style: TextStyle(
-                color: color,
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.4,
-              ),
+              color: color,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -359,13 +356,13 @@ class LedgerScreen extends AppBaseView<HomeController> {
             width: Get.width,
             decoration: BoxDecoration(
                 color: bgclr,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColorHelper().boxShadowColor.withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: AppColorHelper().boxShadowColor.withOpacity(0.15),
+                //     blurRadius: 10,
+                //     offset: const Offset(0, 4),
+                //   ),
+                // ],
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,

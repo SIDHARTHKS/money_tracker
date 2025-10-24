@@ -37,7 +37,7 @@ class SavingsBottomsheet extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           // ── Top handle bar ───────────────────────────
           Center(
@@ -53,11 +53,13 @@ class SavingsBottomsheet extends StatelessWidget {
           ),
 
           // ── Title ───────────────────────────
-          appText(
-            "Add Savings",
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColorHelper().textColor,
+          Center(
+            child: appText(
+              "Add Savings",
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColorHelper().primaryTextColor,
+            ),
           ),
           height(15),
 
@@ -97,8 +99,14 @@ class SavingsBottomsheet extends StatelessWidget {
 
           // ── Save Button ───────────────────────────
           SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
+            width: 100,
+            child: buttonContainer(
+              appText(
+                "Save",
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              color: AppColorHelper().lendColor,
               onPressed: () {
                 final amount = double.tryParse(amountController.text.trim());
                 final note = noteController.text.trim();
@@ -110,18 +118,6 @@ class SavingsBottomsheet extends StatelessWidget {
                   showErrorSnackbar(message: "Invalid Amount");
                 }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColorHelper().primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              child: const Text(
-                "Save",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
             ),
           ),
           height(35),

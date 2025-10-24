@@ -48,8 +48,12 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppColorHelper().cardColor.withValues(alpha: 1.0),
-                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                          color: AppColorHelper()
+                              .borderColor
+                              .withValues(alpha: 0.1)),
+                      color: AppColorHelper().cardColor.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,11 +100,27 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
         // Day header
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-          child: appText(
-            DateHelper().formatDateToWeekdayMonthDay(transactions[0].date),
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: AppColorHelper().primaryTextColor,
+          child: Row(
+            children: [
+              appText(
+                DateHelper().formatDateToWeekdayMonthDay(transactions[0].date),
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: AppColorHelper().primaryTextColor,
+              ),
+              width(10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    color:
+                        AppColorHelper().expenseColor.withValues(alpha: 0.2)),
+                child: appText(calculateTotalAmount(transactions).toString(),
+                    fontSize: 10,
+                    color: AppColorHelper().expenseColor.withValues(alpha: 0.4),
+                    fontWeight: FontWeight.w800),
+              )
+            ],
           ),
         ),
 

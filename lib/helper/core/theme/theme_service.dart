@@ -7,7 +7,7 @@ import '../environment/env.dart';
 import 'app_theme.dart';
 
 class AppThemeService extends GetxService {
-  final _currentClient = AppClient.muziris.obs; // Initial client
+  final _currentClient = AppClient.sid.obs; // Initial client
   final _themeMode = ThemeModeType.light.obs; // Initial theme mode
 
   AppTheme get currentTheme =>

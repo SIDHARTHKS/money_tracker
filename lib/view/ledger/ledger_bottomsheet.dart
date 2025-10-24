@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tracker/helper/app_message.dart';
 import 'package:tracker/helper/color_helper.dart';
 import 'package:tracker/helper/sizer.dart';
 import 'package:tracker/model/ledger_model.dart';
@@ -58,7 +59,7 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
   void _saveLend() {
     final amount = double.tryParse(amountController.text);
     if (amount == null || amount <= 0) {
-      Get.snackbar("Invalid", "Please enter a valid amount");
+      showErrorSnackbar(message: "Please enter a valid amount");
       return;
     }
     homeController.addLedger(LedgerModel(
@@ -171,19 +172,15 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
 
                   // Title Row
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      appText(
-                        "Add Ledger Entry",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: colorHelper.primaryTextColor,
-                      ),
-                      Icon(
-                        Icons.account_balance_wallet_outlined,
-                        color: type == "Lend"
-                            ? colorHelper.lendColor.withOpacity(0.9)
-                            : colorHelper.borrowColor.withOpacity(0.9),
+                      Center(
+                        child: appText(
+                          "Add Ledger Entry",
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: colorHelper.primaryTextColor,
+                        ),
                       ),
                     ],
                   ),
@@ -193,12 +190,13 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
                   Container(
                     decoration: BoxDecoration(
                       color: colorHelper.primaryColorLight.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     padding: const EdgeInsets.all(5),
                     child: Row(
                       children: [
                         _typeButton("Lend", colorHelper.lendColor),
+                        width(10),
                         _typeButton("Borrow", colorHelper.borrowColor),
                       ],
                     ),
@@ -265,7 +263,7 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
                       buttonContainer(
                         appText(
                           "Save",
-                          color: Colors.white,
+                          color: AppColorHelper().primaryTextColor,
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                         ),
@@ -307,14 +305,12 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Center(
-              child: appText(
-                label,
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-                color: selected
-                    ? colorHelper.backgroundColor
-                    : colorHelper.primaryTextColor.withOpacity(0.8),
-              ),
+              child: appText(label,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: selected
+                      ? colorHelper.primaryTextColor
+                      : colorHelper.primaryTextColor),
             ),
           ),
         ),

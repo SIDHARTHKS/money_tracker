@@ -167,11 +167,7 @@ class AppTheme {
 }
 
 final Map<AppClient, Map<ThemeModeType, AppTheme>> appThemes = {
-  AppClient.muziris: {
-    ThemeModeType.light: _demoLightTheme(),
-    ThemeModeType.dark: _demoDarkTheme(),
-  },
-  AppClient.kalyan: {
+  AppClient.sid: {
     ThemeModeType.light: _demoLightTheme(),
     ThemeModeType.dark: _demoDarkTheme(),
   },
@@ -295,7 +291,7 @@ AppTheme _demoLightTheme() => AppTheme(
       primaryColor: Color.fromRGBO(3, 188, 145, 1),
       primaryColorLight: Color.fromRGBO(2, 220, 169, 1),
       primaryColorDark: Color.fromRGBO(1, 151, 116, 1),
-      backgroundColor: const Color.fromARGB(255, 241, 240, 240),
+      backgroundColor: const Color.fromARGB(255, 246, 246, 246),
       cardColor: const Color.fromARGB(255, 255, 255, 255),
       dialogBackgroundColor: Colors.white,
       canvasColor: const Color.fromARGB(255, 245, 243, 248)!,
@@ -348,7 +344,7 @@ AppTheme _demoLightTheme() => AppTheme(
       togglebgColor: const Color.fromRGBO(218, 165, 32, 1),
 
       cardColor2: const Color.fromARGB(255, 3, 173, 179),
-      cardColor3: const Color.fromARGB(255, 192, 227, 97),
+      cardColor3: const Color.fromARGB(255, 183, 255, 217),
       pieColor: const Color.fromRGBO(136, 124, 168, 1),
       pieBgColor: const Color.fromARGB(255, 181, 181, 181),
 

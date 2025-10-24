@@ -1,4 +1,6 @@
-enum AppClient { muziris, kalyan }
+enum AppClient {
+  sid,
+}
 
 enum ThemeModeType { light, dark }
 

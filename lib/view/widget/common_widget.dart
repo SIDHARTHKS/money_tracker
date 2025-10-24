@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:tracker/helper/route.dart';
+import 'package:tracker/model/transaction_model.dart';
 import '../../gen/assets.gen.dart';
 import '../../helper/app_string.dart';
 import '../../helper/color_helper.dart';
@@ -261,9 +262,9 @@ SizedBox appContainerold({
 }) {
   late BoxDecoration boxDecoration;
   boxDecoration = switch (AppEnvironment.appClient) {
-    AppClient.kalyan =>
+    AppClient.sid =>
       const BoxDecoration(color: Color.fromRGBO(251, 249, 216, 1)),
-    AppClient.muziris =>
+    AppClient.sid =>
       const BoxDecoration(color: Color.fromRGBO(251, 249, 216, 1)),
   };
   return SizedBox(
@@ -402,7 +403,7 @@ SizedBox clientLogo({
       width: width,
       height: height,
       child: Image.asset(
-        AppEnvironment.appClient == AppClient.kalyan
+        AppEnvironment.appClient == AppClient.sid
             ? Assets.images.kalyanLogo.path
             : Assets.images.kalyanLogo.path,
       ),
@@ -518,8 +519,8 @@ GestureDetector buttonContainer(
 Row doubleArrowSfxText(String text) {
   Color color;
   color = switch (AppEnvironment.appClient) {
-    AppClient.kalyan => AppColorHelper().textColor,
-    AppClient.muziris => AppColorHelper().textColor,
+    AppClient.sid => AppColorHelper().textColor,
+    AppClient.sid => AppColorHelper().textColor,
   };
   return Row(
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -577,8 +578,8 @@ SizedBox loader() => const SizedBox(
 Image logoImage() {
   String imagePath = '';
   imagePath = switch (AppEnvironment.appClient) {
-    AppClient.muziris => Assets.images.kalyanLogowhite.path,
-    AppClient.kalyan => Assets.images.kalyanLogowhite.path,
+    AppClient.sid => Assets.images.kalyanLogowhite.path,
+    AppClient.sid => Assets.images.kalyanLogowhite.path,
   };
   return Image.asset(
     imagePath,
@@ -834,6 +835,16 @@ String humanize(String text) {
     if (w.isEmpty) return w;
     return w[0].toUpperCase() + w.substring(1).toLowerCase();
   }).join(" ");
+}
+
+double calculateTotalAmount(List<TransactionModel> transactions) {
+  double amnt = 0.0;
+  for (var tx in transactions) {
+    if (tx.type.toLowerCase() == "expense") {
+      amnt += tx.amount;
+    }
+  }
+  return amnt;
 }
 
 class CircleLoader extends StatefulWidget {

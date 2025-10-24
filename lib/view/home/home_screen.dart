@@ -107,6 +107,7 @@ class HomeScreen extends AppBaseView<HomeController> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    width(2),
                     appText("Show All",
                         color: AppColorHelper().primaryColorDark,
                         fontWeight: FontWeight.w500),
@@ -200,6 +201,8 @@ class HomeScreen extends AppBaseView<HomeController> {
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
             child: Container(
               decoration: BoxDecoration(
+                border: Border.all(
+                    color: AppColorHelper().borderColor.withValues(alpha: 0.1)),
                 color: colorHelper.cardColor.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(15),
               ),
@@ -207,16 +210,37 @@ class HomeScreen extends AppBaseView<HomeController> {
                 padding: const EdgeInsets.all(5),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        width(20),
-                        appText(
-                          DateHelper().formatTransactionDate(transList[0].date),
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: colorHelper.primaryTextColor,
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: Row(
+                        children: [
+                          width(20),
+                          appText(
+                            DateHelper()
+                                .formatTransactionDate(transList[0].date),
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: colorHelper.primaryTextColor,
+                          ),
+                          width(10),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 2),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: AppColorHelper()
+                                    .expenseColor
+                                    .withValues(alpha: 0.2)),
+                            child: appText(
+                                calculateTotalAmount(transList).toString(),
+                                fontSize: 10,
+                                color: AppColorHelper()
+                                    .expenseColor
+                                    .withValues(alpha: 0.4),
+                                fontWeight: FontWeight.w800),
+                          )
+                        ],
+                      ),
                     ),
                     _transactionsList(transList, parentIndex: index),
                   ],
