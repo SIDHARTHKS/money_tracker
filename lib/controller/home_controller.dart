@@ -339,11 +339,6 @@ class HomeController extends AppBaseController
       'color': AppColorHelper().foodColor,
     },
     {
-      'name': 'Salary',
-      'icon': Icons.attach_money_rounded,
-      'color': AppColorHelper().salaryColor,
-    },
-    {
       'name': 'Fuel',
       'icon': Icons.local_gas_station_outlined,
       'color': AppColorHelper().fuelColor,
@@ -382,6 +377,11 @@ class HomeController extends AppBaseController
       'name': 'Savings',
       'icon': Icons.account_balance_wallet_outlined,
       'color': AppColorHelper().savingsColor,
+    },
+    {
+      'name': 'Salary',
+      'icon': Icons.attach_money_rounded,
+      'color': AppColorHelper().salaryColor,
     },
     {
       'name': 'Miscellaneous',

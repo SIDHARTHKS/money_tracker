@@ -110,15 +110,18 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
               ),
               width(10),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color:
-                        AppColorHelper().expenseColor.withValues(alpha: 0.2)),
-                child: appText(calculateTotalAmount(transactions).toString(),
-                    fontSize: 10,
-                    color: AppColorHelper().expenseColor.withValues(alpha: 0.4),
-                    fontWeight: FontWeight.w800),
+                  borderRadius: BorderRadius.circular(6),
+                  color: AppColorHelper().expenseColor.withValues(alpha: 0.2),
+                ),
+                child: appText(
+                  calculateTotalAmount(transactions).toString(),
+                  fontSize: 10,
+                  color: AppColorHelper().expenseColor.withValues(alpha: 0.4),
+                  fontWeight: FontWeight.w800,
+                ),
               )
             ],
           ),
@@ -133,8 +136,8 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
             final isExpanded =
                 controller.expandedIndexMap[parentIndex] == txIndex;
             final Color baseColor = tx.type == 'Expense'
-                ? AppColorHelper().expenseColor
-                : AppColorHelper().incomeColor;
+                ? AppColorHelper().expenseColor.withValues(alpha: 0.3)
+                : AppColorHelper().incomeColor.withValues(alpha: 0.5);
             final cat = controller.categoryIcons
                 .firstWhere((c) => c['name'] == tx.category);
             bool isToday = DateHelper.convertDateTimeToString(
@@ -144,8 +147,8 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Material(
+                color: Colors.transparent,
                 borderRadius: BorderRadius.circular(16),
-                color: AppColorHelper().cardColor.withOpacity(0.1),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(16),
                   onTap: () {
@@ -156,35 +159,64 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
                     }
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOutCubic,
                     padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
+                        vertical: 14, horizontal: 16),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColorHelper().borderColor.withOpacity(0.05),
-                      ),
+                      color: AppColorHelper().cardColor.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColorHelper()
+                            .borderColor
+                            .withValues(alpha: 0.06),
+                      ),
                     ),
                     child: Column(
                       children: [
                         // Main tile row
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            // Icon container with gradient + shadow
                             Container(
-                              width: 48,
-                              height: 48,
+                              width: 45,
+                              height: 45,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: cat['color'].withOpacity(0.35),
+                                borderRadius: BorderRadius.circular(14),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    cat['color'].withOpacity(0.1),
+                                    cat['color'].withOpacity(0.3),
+                                  ],
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: cat['color'].withOpacity(0.15),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: cat['color'].withOpacity(0.2),
+                                  width: 1,
+                                ),
                               ),
-                              child: Icon(
-                                cat['icon'],
-                                color: AppColorHelper()
-                                    .primaryTextColor
-                                    .withOpacity(0.8),
+                              child: Center(
+                                child: Icon(
+                                  cat['icon'],
+                                  color: AppColorHelper()
+                                      .primaryTextColor
+                                      .withValues(alpha: 0.5),
+                                  size: 22,
+                                ),
                               ),
                             ),
                             width(12),
+
+                            // Category + Date
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,22 +227,24 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
                                     fontSize: 15,
                                     color: AppColorHelper().primaryTextColor,
                                   ),
-                                  height(4),
+                                  const SizedBox(height: 3),
                                   appText(
                                     isToday
                                         ? 'Today'
                                         : DateHelper.convertDateTimeToString(
                                             dateTime: tx.date),
-                                    fontSize: 13,
+                                    fontSize: 12,
                                     color: AppColorHelper()
                                         .primaryTextColor
-                                        .withOpacity(0.6),
+                                        .withValues(alpha: 0.5),
                                   ),
                                 ],
                               ),
                             ),
+
+                            // Amount
                             appText(
-                              (tx.type == 'Expense' ? '- ₹ ' : '+ ₹ ') +
+                              (tx.type == 'Expense' ? "- ₹ " : "+ ₹ ") +
                                   tx.amount.toStringAsFixed(2),
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -221,8 +255,8 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
 
                         // Expanded details
                         AnimatedSize(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeInOutCubic,
                           child: isExpanded
                               ? Padding(
                                   padding: const EdgeInsets.only(top: 12),
@@ -231,23 +265,62 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Divider(
-                                          color: AppColorHelper()
-                                              .borderColor
-                                              .withOpacity(0.05)),
+                                        height: 16,
+                                        thickness: 0.5,
+                                        color: AppColorHelper()
+                                            .borderColor
+                                            .withValues(alpha: 0.06),
+                                      ),
                                       height(6),
                                       appText(
                                         'Description',
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            AppColorHelper().primaryTextColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13,
+                                        color: AppColorHelper()
+                                            .primaryTextColor
+                                            .withValues(alpha: 0.6),
                                       ),
-                                      height(4),
+                                      const SizedBox(height: 4),
                                       appText(
                                         tx.description.isEmpty
                                             ? 'No description'
                                             : tx.description,
-                                        color:
-                                            AppColorHelper().primaryTextColor,
+                                        fontSize: 13,
+                                        color: AppColorHelper()
+                                            .primaryTextColor
+                                            .withValues(alpha: 0.6),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: buttonContainer(
+                                          height: 35,
+                                          width: 100,
+                                          color: AppColorHelper()
+                                              .cardColor
+                                              .withOpacity(0.1),
+                                          borderColor: AppColorHelper()
+                                              .errorBorderColor
+                                              .withValues(alpha: 0.6),
+                                          onPressed: () {
+                                            controller
+                                                .deleteTransaction(tx.key);
+                                            controller.expandedIndexMap.clear();
+                                          },
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              appText(
+                                                "Remove",
+                                                fontSize: 11,
+                                                color: AppColorHelper()
+                                                    .errorColor
+                                                    .withValues(alpha: 0.7),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -265,235 +338,4 @@ class ViewAllScreen extends AppBaseView<TransactionsController> {
       ],
     );
   }
-
-//   ListView _sortedTransactions() {
-//     return ListView.builder(
-//         shrinkWrap: true,
-//         physics: const NeverScrollableScrollPhysics(),
-//         itemCount: controller.sortedTransactionsByDate.length,
-//         itemBuilder: (context, index) {
-//           var transList = controller.sortedTransactionsByDate[index];
-//           return Padding(
-//             padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
-//             child: Container(
-//               decoration: BoxDecoration(
-//                   color: AppColorHelper().cardColor.withValues(alpha: 0.3),
-//                   borderRadius: BorderRadius.circular(15)),
-//               child: Padding(
-//                 padding:
-//                     const EdgeInsets.symmetric(horizontal: 5, vertical: 5.0),
-//                 child: Column(
-//                   children: [
-//                     Row(
-//                       children: [
-//                         width(20),
-//                         appText(
-//                             DateHelper()
-//                                 .formatTransactionDate(transList[0].date),
-//                             textAlign: TextAlign.start,
-//                             fontSize: 20,
-//                             fontWeight: FontWeight.w600,
-//                             color: AppColorHelper().primaryTextColor),
-//                       ],
-//                     ),
-//                     _transactionsList(transList, parentIndex: index),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           );
-//         });
-//   }
-
-//   ListView _transactionsList(List<TransactionModel> transactions,
-//       {required int parentIndex}) {
-//     return ListView.builder(
-//       shrinkWrap: true,
-//       physics: const NeverScrollableScrollPhysics(),
-//       itemCount: transactions.length,
-//       itemBuilder: (context, index) {
-//         final tx = transactions[index];
-//         return Obx(() {
-//           final isExpanded = controller.expandedIndexMap[parentIndex] == index;
-//           final Color baseColor = tx.type == 'Expense'
-//               ? AppColorHelper().expenseColor
-//               : AppColorHelper().incomeColor;
-//           final cat = controller.categoryIcons.firstWhere(
-//             (c) => c['name'] == tx.category,
-//           );
-//           bool isToday =
-//               DateHelper.convertDateTimeToString(dateTime: tx.date) ==
-//                   DateHelper.convertDateTimeToString(dateTime: DateTime.now());
-
-//           return Padding(
-//             padding: const EdgeInsets.symmetric(vertical: 6),
-//             child: Material(
-//               borderRadius: BorderRadius.circular(16),
-//               color: AppColorHelper().cardColor.withValues(alpha: 0.1),
-//               child: InkWell(
-//                 borderRadius: BorderRadius.circular(16),
-//                 onTap: () {
-//                   final groupIndex = parentIndex; // we'll pass this below
-//                   if (controller.expandedIndexMap[groupIndex] == index) {
-//                     controller.expandedIndexMap.remove(groupIndex);
-//                   } else {
-//                     controller.expandedIndexMap[groupIndex] = index;
-//                   }
-//                 },
-//                 child: AnimatedContainer(
-//                   duration: const Duration(milliseconds: 300),
-//                   padding:
-//                       const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-//                   decoration: BoxDecoration(
-//                     border: isExpanded
-//                         ? Border.all(
-//                             color: AppColorHelper()
-//                                 .borderColor
-//                                 .withValues(alpha: 0.05))
-//                         : Border.all(
-//                             color: AppColorHelper()
-//                                 .borderColor
-//                                 .withValues(alpha: 0.05)),
-//                     borderRadius: BorderRadius.circular(16),
-//                   ),
-//                   child: Column(
-//                     children: [
-//                       // Main Tile
-//                       Row(
-//                         crossAxisAlignment: CrossAxisAlignment.center,
-//                         children: [
-//                           // Gradient Circle Icon
-//                           Container(
-//                             width: 48,
-//                             height: 48,
-//                             decoration: BoxDecoration(
-//                                 borderRadius: BorderRadius.circular(15),
-//                                 color: cat['color'].withOpacity(0.35)),
-//                             child: Icon(
-//                               cat['icon'],
-//                               color: AppColorHelper()
-//                                   .primaryTextColor
-//                                   .withValues(alpha: 0.8),
-//                             ),
-//                           ),
-//                           width(12),
-//                           // Title & Category
-//                           Expanded(
-//                             child: Column(
-//                               crossAxisAlignment: CrossAxisAlignment.start,
-//                               children: [
-//                                 appText(
-//                                   tx.category,
-//                                   fontWeight: FontWeight.w600,
-//                                   fontSize: 15,
-//                                   color: AppColorHelper().primaryTextColor,
-//                                 ),
-//                                 height(4),
-//                                 isToday
-//                                     ? appText(
-//                                         "Today",
-//                                         fontSize: 13,
-//                                         color: AppColorHelper()
-//                                             .primaryTextColor
-//                                             .withOpacity(0.6),
-//                                       )
-//                                     : appText(
-//                                         DateHelper.convertDateTimeToString(
-//                                             dateTime: tx.date),
-//                                         fontSize: 13,
-//                                         color: AppColorHelper()
-//                                             .primaryTextColor
-//                                             .withOpacity(0.6),
-//                                       ),
-//                               ],
-//                             ),
-//                           ),
-//                           // Amount
-//                           appText(
-//                             (tx.type == 'Expense' ? "- ₹ " : "+ ₹ ") +
-//                                 tx.amount.toStringAsFixed(2),
-//                             fontWeight: FontWeight.bold,
-//                             fontSize: 16,
-//                             color: baseColor,
-//                           ),
-//                         ],
-//                       ),
-
-//                       // Expanded Details
-//                       AnimatedSize(
-//                         duration: const Duration(milliseconds: 300),
-//                         curve: Curves.easeInOut,
-//                         child: isExpanded
-//                             ? Padding(
-//                                 padding: const EdgeInsets.only(top: 12),
-//                                 child: Column(
-//                                   crossAxisAlignment: CrossAxisAlignment.start,
-//                                   children: [
-//                                     Divider(
-//                                         color: AppColorHelper()
-//                                             .borderColor
-//                                             .withOpacity(0.05)),
-//                                     height(6),
-//                                     appText(
-//                                       "Description",
-//                                       fontWeight: FontWeight.bold,
-//                                       color: AppColorHelper().primaryTextColor,
-//                                     ),
-//                                     height(4),
-//                                     appText(
-//                                       tx.description.isEmpty
-//                                           ? "No description"
-//                                           : tx.description,
-//                                       color: AppColorHelper().primaryTextColor,
-//                                     ),
-//                                     // height(10),
-//                                     // Align(
-//                                     //   alignment: Alignment.centerRight,
-//                                     //   child: FilledButton.icon(
-//                                     //     onPressed: () => controller
-//                                     //         .deleteTransaction(tx.key),
-//                                     //     icon: Icon(
-//                                     //       Icons.close,
-//                                     //       size: 20,
-//                                     //       color: AppColorHelper().errorColor,
-//                                     //     ),
-//                                     //     label: appText("Remove",
-//                                     //         color: AppColorHelper().errorColor,
-//                                     //         fontWeight: FontWeight.w500),
-//                                     //     style: FilledButton.styleFrom(
-//                                     //       side: BorderSide(
-//                                     //         color: AppColorHelper()
-//                                     //             .errorColor
-//                                     //             .withValues(alpha: 0.1),
-//                                     //         width:
-//                                     //             1.5, // optional: border width
-//                                     //       ),
-//                                     //       backgroundColor: AppColorHelper()
-//                                     //           .errorColor
-//                                     //           .withValues(alpha: 0.1),
-//                                     //       padding: const EdgeInsets.symmetric(
-//                                     //           vertical: 10, horizontal: 12),
-//                                     //       shape: RoundedRectangleBorder(
-//                                     //         borderRadius:
-//                                     //             BorderRadius.circular(12),
-//                                     //       ),
-//                                     //     ),
-//                                     //   ),
-//                                     // ),
-//                                   ],
-//                                 ),
-//                               )
-//                             : const SizedBox.shrink(),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           );
-//         });
-//       },
-//     );
-//   }
-// }
 }

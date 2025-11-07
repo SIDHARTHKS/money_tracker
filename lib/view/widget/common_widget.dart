@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:tracker/helper/route.dart';
 import 'package:tracker/model/transaction_model.dart';
 import '../../gen/assets.gen.dart';
 import '../../helper/app_string.dart';
@@ -95,12 +94,19 @@ AppBar appBar({
       height: 60,
       decoration: BoxDecoration(),
       child: Center(
-        child: leadingWidget ??
-            Icon(
-              Icons.arrow_back_ios_new,
-              size: 30,
-              color: AppColorHelper().primaryTextColor,
-            ),
+        child: Container(
+          padding: EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                  color: AppColorHelper().borderColor.withValues(alpha: 0.1))),
+          child: leadingWidget ??
+              Icon(
+                Icons.arrow_back_ios_new,
+                size: 25,
+                color: AppColorHelper().primaryTextColor,
+              ),
+        ),
       ),
     ),
   );
@@ -175,6 +181,7 @@ AppBar appBar({
 
 customAppBar(String title, String subtitle, {VoidCallback? onTap}) => AppBar(
       toolbarHeight: 70,
+      surfaceTintColor: AppColorHelper().transparentColor,
       backgroundColor: AppColorHelper().backgroundColor,
       titleSpacing: 0,
       title: Align(
@@ -183,27 +190,27 @@ customAppBar(String title, String subtitle, {VoidCallback? onTap}) => AppBar(
           padding: const EdgeInsets.only(left: 12.0),
           child: Row(
             children: [
-              Container(
-                  width: 55,
-                  height: 55,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          color: AppColorHelper()
-                              .borderColor
-                              .withValues(alpha: 0.15)),
-                      color: AppColorHelper()
-                          .backgroundColor
-                          .withValues(alpha: 0.5)),
-                  child: GestureDetector(
-                    onTap: onTap,
-                    child: const Icon(
-                      Icons.person_rounded,
-                      color: Colors.black,
-                      size: 24,
-                    ),
-                  )),
-              width(10),
+              // Container(
+              //     width: 55,
+              //     height: 55,
+              //     decoration: BoxDecoration(
+              //         shape: BoxShape.circle,
+              //         border: Border.all(
+              //             color: AppColorHelper()
+              //                 .borderColor
+              //                 .withValues(alpha: 0.15)),
+              //         color: AppColorHelper()
+              //             .backgroundColor
+              //             .withValues(alpha: 0.5)),
+              //     child: GestureDetector(
+              //       onTap: onTap,
+              //       child: const Icon(
+              //         Icons.person_rounded,
+              //         color: Colors.black,
+              //         size: 24,
+              //       ),
+              //     )),
+              // width(10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -224,34 +231,34 @@ customAppBar(String title, String subtitle, {VoidCallback? onTap}) => AppBar(
         ),
       ),
       actions: [
-        GestureDetector(
-          onTap: () {
-            navigateTo(savingsPageRoute);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Container(
-              width: 55,
-              height: 55,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color:
-                          AppColorHelper().borderColor.withValues(alpha: 0.11)),
-                  color: AppColorHelper().primaryColor.withValues(alpha: 0.17)),
-              child: GestureDetector(
-                  onTap: onTap,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 17.0, right: 13.0, top: 13.0, bottom: 13.0),
-                    child: Image.asset(
-                      Assets.icons.savings.path,
-                      color: AppColorHelper().primaryColor,
-                    ),
-                  )),
-            ),
-          ),
-        ),
+        // GestureDetector(
+        //   onTap: () {
+        //     navigateTo(savingsPageRoute);
+        //   },
+        //   child: Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        //     child: Container(
+        //       width: 55,
+        //       height: 55,
+        //       decoration: BoxDecoration(
+        //           shape: BoxShape.circle,
+        //           border: Border.all(
+        //               color:
+        //                   AppColorHelper().borderColor.withValues(alpha: 0.11)),
+        //           color: AppColorHelper().primaryColor.withValues(alpha: 0.17)),
+        //       child: GestureDetector(
+        //           onTap: onTap,
+        //           child: Padding(
+        //             padding: const EdgeInsets.only(
+        //                 left: 17.0, right: 13.0, top: 13.0, bottom: 13.0),
+        //             child: Image.asset(
+        //               Assets.icons.savings.path,
+        //               color: AppColorHelper().primaryColor,
+        //             ),
+        //           )),
+        //     ),
+        //   ),
+        // ),
       ],
     );
 
@@ -447,38 +454,6 @@ LoadingIndicator secondaryLoader() => LoadingIndicator(
       indicatorType: Indicator.circleStrokeSpin,
       colors: [AppColorHelper().primaryColor],
     );
-GestureDetector gradientButtonContainer(
-  Widget child, {
-  double? radius,
-  double? width,
-  double? height = 60,
-  VoidCallback? onPressed,
-  List<Color>? gradientColors,
-  AlignmentGeometry begin = Alignment.centerLeft,
-  AlignmentGeometry end = Alignment.centerRight,
-}) =>
-    GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: width,
-        height: 50,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(radius ?? 15),
-          gradient: LinearGradient(
-            begin: begin,
-            end: end,
-            colors: gradientColors ??
-                const [
-                  Color.fromARGB(255, 237, 185, 42), // Gold
-                  Color.fromARGB(255, 193, 163, 62), // Warm Brown
-                ],
-          ),
-        ),
-        child: child,
-      ),
-    );
 
 GestureDetector buttonContainer(
   Widget child, {
@@ -503,14 +478,100 @@ GestureDetector buttonContainer(
               color: borderColor ??
                   AppColorHelper().primaryTextColor.withValues(alpha: 0.5)),
           color: color ?? AppColorHelper().buttonColor,
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withOpacity(0.3),
-          //     spreadRadius: 2,
-          //     blurRadius: 8,
-          //     offset: Offset(0, 3),
-          //   ),
-          // ],
+        ),
+        child: child,
+      ),
+    );
+
+GestureDetector gradientButtonContainer(
+  Widget child, {
+  double radius = 10,
+  double? width,
+  double? height = 50,
+  Color? color,
+  VoidCallback? onPressed,
+}) =>
+    GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: width,
+        height: height,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(radius),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColorHelper().primaryColor.withValues(alpha: 0.35),
+              AppColorHelper().primaryColor.withValues(alpha: 0.05),
+            ],
+          ),
+          border: Border.all(
+            color: AppColorHelper().borderColor.withValues(alpha: 0.1),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColorHelper().primaryColor.withValues(alpha: 0.18),
+              blurRadius: 18,
+              spreadRadius: 2,
+              offset: const Offset(0, 6), // gentle bottom glow
+            ),
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.15),
+              blurRadius: 6,
+              spreadRadius: -2,
+              offset: const Offset(0, -3), // subtle top light
+            ),
+          ],
+        ),
+        child: child,
+      ),
+    );
+
+GestureDetector errorGradientButtonContainer(
+  Widget child, {
+  double radius = 10,
+  double? width,
+  double? height = 50,
+  Color? color,
+  VoidCallback? onPressed,
+}) =>
+    GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: width,
+        height: height,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(radius),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColorHelper().errorColor.withValues(alpha: 0.45),
+              AppColorHelper().errorColor.withValues(alpha: 0.05),
+            ],
+          ),
+          border: Border.all(
+            color: AppColorHelper().borderColor.withValues(alpha: 0.05),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColorHelper().errorColor.withValues(alpha: 0.18),
+              blurRadius: 18,
+              spreadRadius: 2,
+              offset: const Offset(0, 6), // gentle bottom glow
+            ),
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.15),
+              blurRadius: 6,
+              spreadRadius: -2,
+              offset: const Offset(0, -3), // subtle top light
+            ),
+          ],
         ),
         child: child,
       ),

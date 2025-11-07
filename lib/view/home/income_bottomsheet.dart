@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:tracker/helper/app_message.dart';
 import 'package:tracker/helper/color_helper.dart';
 import 'package:tracker/helper/sizer.dart';
 import 'package:tracker/model/salary_model.dart';
 import 'package:tracker/view/widget/formatter/amount_formatter.dart';
-import 'package:tracker/view/widget/text/app_text.dart';
+import 'package:tracker/view/widget/textformfield/common_textfield.dart';
 import '../widget/common_widget.dart';
 
 class IncomeBottomsheet extends StatefulWidget {
@@ -118,41 +117,20 @@ class _IncomeBottomsheetState extends State<IncomeBottomsheet> {
                 height(20),
 
                 // TextField
-                TextField(
+                CommonTextField(
                   controller: _controller,
+                  label: "Enter your goal",
+                  prefixIcon: Icons.currency_rupee_rounded,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
-                  cursorColor: colorHelper.primaryColor,
-                  style: textStyle(
-                    16,
-                    colorHelper.primaryTextColor,
-                    FontWeight.w500,
-                  ),
                   inputFormatters: [
                     AmountFormatter(
                         maxDigitsBeforeDecimal: 8, maxDigitsAfterDecimal: 2),
                   ],
-                  decoration: InputDecoration(
-                    hintText: "Enter your goal",
-                    hintStyle: TextStyle(
-                      color: colorHelper.primaryTextColor.withOpacity(0.5),
-                      fontWeight: FontWeight.w400,
-                    ),
-                    filled: true,
-                    fillColor: isDark
-                        ? colorHelper.primaryColorDark.withOpacity(0.15)
-                        : colorHelper.primaryColorLight.withOpacity(0.08),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.currency_rupee_rounded,
-                      color: colorHelper.primaryTextColor.withOpacity(0.7),
-                    ),
-                  ),
+                  fillColor: isDark
+                      ? colorHelper.primaryColorDark.withOpacity(0.15)
+                      : colorHelper.primaryColorLight.withOpacity(0.08),
+                  fontSize: 16,
                 ),
 
                 height(26),

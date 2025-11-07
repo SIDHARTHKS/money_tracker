@@ -5,7 +5,9 @@ import 'package:tracker/helper/color_helper.dart';
 import 'package:tracker/helper/sizer.dart';
 import 'package:tracker/model/ledger_model.dart';
 import 'package:tracker/view/widget/common_widget.dart';
+import 'package:tracker/view/widget/formatter/amount_formatter.dart';
 import 'package:tracker/view/widget/text/app_text.dart';
+import 'package:tracker/view/widget/textformfield/common_textfield.dart';
 
 import '../../controller/home_controller.dart';
 
@@ -91,39 +93,30 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
   InputDecoration _modernInputDecoration(String label,
       {IconData? icon, String? hintText}) {
     final colorHelper = AppColorHelper();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeColor =
-        type == "Lend" ? colorHelper.lendColor : colorHelper.borrowColor;
 
     return InputDecoration(
-      prefixIcon: icon != null
-          ? Icon(icon, color: activeColor.withOpacity(0.85))
-          : null,
-      labelText: label,
-      hintText: hintText,
+      hintText: label,
+      labelText: "",
+      hintStyle: textStyle(12,
+          colorHelper.primaryTextColor.withValues(alpha: 0.5), FontWeight.w400),
+      prefixIcon:
+          Icon(Icons.date_range_outlined, color: colorHelper.primaryTextColor),
       filled: true,
-      fillColor: isDark
-          ? activeColor.withOpacity(0.08)
-          : activeColor.withOpacity(0.06),
-      labelStyle: textStyle(
-        14,
-        colorHelper.primaryTextColor.withOpacity(0.75),
-        FontWeight.w500,
-      ),
-      hintStyle: textStyle(
-        14,
-        colorHelper.primaryTextColor.withOpacity(0.55),
-        FontWeight.w400,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
+      fillColor: colorHelper.primaryColor.withValues(alpha: 0.05),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: colorHelper.borderColor.withValues(alpha: 0.05),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: activeColor, width: 1.4),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: colorHelper.primaryColor.withValues(alpha: 0.05),
+          width: 1.4,
+        ),
       ),
-      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
     );
   }
 
@@ -187,35 +180,25 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
                   height(20),
 
                   // Type Toggle
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colorHelper.primaryColorLight.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    padding: const EdgeInsets.all(5),
-                    child: Row(
-                      children: [
-                        _typeButton("Lend", colorHelper.lendColor),
-                        width(10),
-                        _typeButton("Borrow", colorHelper.borrowColor),
-                      ],
-                    ),
-                  ),
+                  _buildTypeSwitcher(colorHelper),
                   height(20),
 
                   // Input Fields (reactive to type color)
-                  TextField(
+                  CommonTextField(
                     controller: amountController,
+                    label: "Amount",
+                    prefixIcon: Icons.currency_rupee_rounded,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    decoration: _modernInputDecoration("Amount",
-                        icon: Icons.currency_rupee_rounded),
                   ),
                   height(12),
-                  TextField(
+
+                  CommonTextField(
                     controller: nameController,
-                    decoration: _modernInputDecoration("Assign Name",
-                        icon: Icons.person_outline_rounded),
+                    label: "Assign Name",
+                    prefixIcon: Icons.person_outline_rounded,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                   ),
                   height(12),
                   GestureDetector(
@@ -232,13 +215,11 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
                     ),
                   ),
                   height(12),
-                  TextField(
-                    controller: descriptionController,
+                  CommonTextField(
+                    controller: nameController,
+                    label: "Description",
                     maxLines: 2,
-                    decoration: _modernInputDecoration(
-                      "Description (Optional)",
-                      icon: Icons.notes_rounded,
-                    ),
+                    prefixIcon: Icons.notes_rounded,
                   ),
                   height(26),
 
@@ -253,14 +234,15 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                         ),
-                        color: colorHelper.primaryColor.withOpacity(0.08),
-                        borderColor: Colors.transparent,
+                        color: colorHelper.primaryColor.withOpacity(0.05),
+                        borderColor:
+                            AppColorHelper().borderColor.withValues(alpha: 0.1),
                         width: 100,
                         height: 42,
                         onPressed: () => Navigator.pop(context),
                       ),
                       width(10),
-                      buttonContainer(
+                      gradientButtonContainer(
                         appText(
                           "Save",
                           color: AppColorHelper().primaryTextColor,
@@ -284,6 +266,75 @@ class _LedgerBottomsheetState extends State<LedgerBottomsheet> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTypeSwitcher(AppColorHelper colorHelper) {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: colorHelper.cardColor3.withValues(alpha: 0.1),
+        border: Border.all(
+            color: AppColorHelper().borderColor.withValues(alpha: 0.05)),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: AppColorHelper().boxShadowColor.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Sliding background highlight
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            alignment:
+                type == 'Lend' ? Alignment.centerLeft : Alignment.centerRight,
+            child: Container(
+              width: (Get.width - 50) / 2, // or manually set width if needed
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              decoration: BoxDecoration(
+                color: AppColorHelper().cardColor.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        AppColorHelper().boxShadowColor.withValues(alpha: 0.01),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(child: _buildTypeChip('Lend', colorHelper.borrowColor)),
+              Expanded(child: _buildTypeChip('Borrow', colorHelper.lendColor)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypeChip(String label, Color color) {
+    return GestureDetector(
+      onTap: () => setState(() => type = label),
+      child: AnimatedDefaultTextStyle(
+        duration: const Duration(milliseconds: 200),
+        style: textStyle(
+          15,
+          AppColorHelper().primaryTextColor,
+          FontWeight.w600,
+        ),
+        child: Center(child: Text(label)),
       ),
     );
   }

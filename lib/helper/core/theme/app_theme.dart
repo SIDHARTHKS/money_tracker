@@ -225,7 +225,7 @@ AppTheme _demoDarkTheme() => AppTheme(
 
       //progressbar
       progressbarBgclr: const Color.fromARGB(255, 36, 36, 36),
-      progressbarclr: const Color.fromARGB(255, 255, 255, 255),
+      progressbarclr: Color.fromRGBO(210, 250, 241, 1),
 
       //
       lendColor: const Color.fromARGB(255, 108, 249, 209),
@@ -243,8 +243,8 @@ AppTheme _demoDarkTheme() => AppTheme(
 
       togglebgColor: const Color.fromRGBO(218, 165, 32, 1),
 
-      cardColor2: const Color.fromARGB(255, 236, 230, 252),
-      cardColor3: const Color.fromARGB(255, 192, 227, 97),
+      cardColor2: const Color.fromARGB(255, 255, 255, 255),
+      cardColor3: const Color.fromARGB(255, 0, 0, 0),
       pieColor: const Color.fromRGBO(136, 124, 168, 1),
       pieBgColor: const Color.fromARGB(255, 181, 181, 181),
 
@@ -257,9 +257,9 @@ AppTheme _demoDarkTheme() => AppTheme(
       ledgerColor: const Color.fromARGB(255, 227, 125, 66),
 
       // categories
-      foodColor: const Color.fromARGB(255, 182, 250, 93),
+      foodColor: const Color.fromARGB(255, 161, 229, 51),
       salaryColor: const Color.fromARGB(255, 92, 236, 255),
-      fuelColor: const Color.fromARGB(255, 239, 255, 96),
+      fuelColor: const Color.fromARGB(255, 235, 120, 70),
       travelColor: const Color.fromARGB(255, 135, 81, 249),
       homeRentColor: const Color.fromARGB(255, 255, 80, 139),
       shoppingColor: const Color.fromARGB(255, 254, 160, 51),
@@ -291,7 +291,7 @@ AppTheme _demoLightTheme() => AppTheme(
       primaryColor: Color.fromRGBO(3, 188, 145, 1),
       primaryColorLight: Color.fromRGBO(2, 220, 169, 1),
       primaryColorDark: Color.fromRGBO(1, 151, 116, 1),
-      backgroundColor: const Color.fromARGB(255, 246, 246, 246),
+      backgroundColor: const Color.fromARGB(255, 249, 249, 249),
       cardColor: const Color.fromARGB(255, 255, 255, 255),
       dialogBackgroundColor: Colors.white,
       canvasColor: const Color.fromARGB(255, 245, 243, 248)!,
@@ -310,7 +310,7 @@ AppTheme _demoLightTheme() => AppTheme(
       disabledBorderColor: const Color.fromARGB(255, 20, 44, 49),
       errorBorderColor: Colors.redAccent,
       dividerColor: Colors.grey,
-      iconColor: const Color.fromRGBO(81, 55, 136, 1),
+      iconColor: const Color.fromARGB(255, 48, 48, 48),
       selectedIconColor: const Color.fromRGBO(180, 29, 141, 1)!,
       unselectedIconColor: Colors.grey,
 
@@ -325,7 +325,7 @@ AppTheme _demoLightTheme() => AppTheme(
 
       //progressbar
       progressbarBgclr: const Color.fromARGB(48, 193, 192, 192),
-      progressbarclr: const Color.fromARGB(255, 255, 255, 255),
+      progressbarclr: Color.fromRGBO(237, 255, 251, 1),
 
       //
       lendColor: const Color.fromARGB(255, 108, 249, 209),
@@ -344,7 +344,7 @@ AppTheme _demoLightTheme() => AppTheme(
       togglebgColor: const Color.fromRGBO(218, 165, 32, 1),
 
       cardColor2: const Color.fromARGB(255, 3, 173, 179),
-      cardColor3: const Color.fromARGB(255, 183, 255, 217),
+      cardColor3: const Color.fromARGB(255, 0, 0, 0),
       pieColor: const Color.fromRGBO(136, 124, 168, 1),
       pieBgColor: const Color.fromARGB(255, 181, 181, 181),
 
@@ -357,9 +357,9 @@ AppTheme _demoLightTheme() => AppTheme(
       ledgerColor: const Color.fromARGB(255, 227, 125, 66),
 
 // categories
-      foodColor: const Color.fromARGB(255, 182, 250, 93),
+      foodColor: const Color.fromARGB(255, 161, 229, 51),
       salaryColor: const Color.fromARGB(255, 92, 236, 255),
-      fuelColor: const Color.fromARGB(255, 239, 255, 96),
+      fuelColor: const Color.fromARGB(255, 235, 120, 70),
       travelColor: const Color.fromARGB(255, 135, 81, 249),
       homeRentColor: const Color.fromARGB(255, 255, 80, 139),
       shoppingColor: const Color.fromARGB(255, 254, 160, 51),

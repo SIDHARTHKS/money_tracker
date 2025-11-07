@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tracker/gen/assets.gen.dart';
@@ -6,7 +7,7 @@ import 'package:tracker/helper/navigation.dart';
 import 'package:tracker/helper/route.dart';
 import 'package:tracker/model/transaction_model.dart';
 import 'package:tracker/view/home/income_bottomsheet.dart';
-import 'package:tracker/view/home/transaction_bottomsheet.dart';
+import 'package:tracker/view/home/quick_add_bottomsheet.dart';
 import '../../controller/home_controller.dart';
 import '../../helper/color_helper.dart';
 import '../../helper/core/base/app_base_view.dart';
@@ -26,122 +27,278 @@ class HomeScreen extends AppBaseView<HomeController> {
       );
 
   AppBar _buildAppBar() =>
-      customAppBar("Hi, ${controller.rxUserName} !", "sidhuks29@gmail.com");
+      // customAppBar("Hi, ${controller.rxUserName} !", "sidhuks29@gmail.com");
+      customAppBar("Money", "sidhuks29@hmail.com");
 
   Widget _buildBody() {
     final colorHelper = AppColorHelper();
 
-    return Obx(() => appContainer(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _moneyDetails(),
-                if (controller.rxTotalincome.value > 0) _incomeContainer(),
-                _transactionAndLedger(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Obx(
+      () => appContainer(
+        child: Stack(
+          children: [
+            // --- Main Scroll Content ---
+            appContainer(
+              child: SingleChildScrollView(
+                padding:
+                    const EdgeInsets.only(bottom: 50), // leave space for button
+                child: Column(
                   children: [
-                    if (controller.salary.value != 0.0)
-                      _quickAddButton(colorHelper),
-                    if (controller.transactions.isNotEmpty) _showAllButton(),
-                  ],
-                ),
-                _sortedTransactions(),
-              ],
-            ),
-          ),
-        ));
-  }
-
-  Widget _quickAddButton(AppColorHelper colorHelper) => GestureDetector(
-        onTap: () {},
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Container(
-            height: 30,
-            width: 125,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: colorHelper.primaryColor.withValues(alpha: 0.3),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                appText("Quick add",
-                    fontWeight: FontWeight.w600,
-                    color: colorHelper.primaryColorDark),
-                width(5),
-                Icon(Icons.add, size: 20, color: colorHelper.primaryColorDark),
-              ],
-            ),
-          ),
-        ),
-      );
-
-  GestureDetector _showAllButton() => GestureDetector(
-        onTap: () => navigateTo(viewAllPageRoute),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                height: 30,
-                width: 95,
-                decoration: BoxDecoration(
-                  color: AppColorHelper().primaryColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColorHelper()
-                          .primaryColorDark
-                          .withValues(alpha: 0.010),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    width(2),
-                    appText("Show All",
-                        color: AppColorHelper().primaryColorDark,
-                        fontWeight: FontWeight.w500),
-                    Icon(Icons.arrow_forward_ios_rounded,
-                        size: 15, color: AppColorHelper().primaryColorDark),
+                    _moneyDetails(),
+                    if (controller.rxTotalincome.value > 0) _incomeContainer(),
+                    _transactionAndLedger(),
+                    height(5),
+                    controller.transactions.isNotEmpty
+                        ? Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  colorHelper.cardColor.withValues(alpha: 0.99),
+                                  colorHelper.cardColor.withValues(alpha: 0.85),
+                                  colorHelper.cardColor.withValues(alpha: 0.8),
+                                  colorHelper.cardColor.withValues(alpha: 0.75),
+                                  colorHelper.cardColor.withValues(alpha: 0.6),
+                                  colorHelper.cardColor.withValues(alpha: 0.5),
+                                  colorHelper.cardColor.withValues(alpha: 0.0),
+                                ],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColorHelper()
+                                      .boxShadowColor
+                                      .withValues(alpha: 0.05),
+                                  spreadRadius: 0,
+                                  blurRadius: 8,
+                                  offset: const Offset(0, -4), // shadow at top
+                                ),
+                              ],
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              ),
+                              color: colorHelper.cardColor,
+                            ),
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 25),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      controller.transactions.isNotEmpty
+                                          ? appText(
+                                              "Recent Transactions",
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
+                                              color:
+                                                  colorHelper.primaryTextColor,
+                                            )
+                                          : const SizedBox.shrink(),
+                                      if (controller.transactions.isNotEmpty)
+                                        _showAllButton(),
+                                    ],
+                                  ),
+                                ),
+                                height(10),
+                                _sortedTransactions(),
+                              ],
+                            ),
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              height(50),
+                              controller.rxTotalbalance.value != 0.00
+                                  ? appText("Tap + to add transactions",
+                                      color: AppColorHelper().primaryTextColor,
+                                      fontWeight: FontWeight.w500)
+                                  : appText("Set a goal to add transactions",
+                                      color: AppColorHelper()
+                                          .primaryTextColor
+                                          .withValues(alpha: 0.5),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500),
+                            ],
+                          )
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+
+            // --- Floating Button ---
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: GestureDetector(
+                onTap: () async {
+                  await showModalBottomSheet(
+                    context: Get.context!,
+                    isScrollControlled: true,
+                    backgroundColor: colorHelper.cardColor,
+                    constraints:
+                        BoxConstraints.expand(height: Get.height * 0.75),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(40)),
+                    ),
+                    builder: (_) => const QuickAddBottomsheet(),
+                  );
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 350),
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        colorHelper.cardColor3,
+                        colorHelper.cardColor3.withValues(alpha: 0.5),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorHelper.cardColor3.withValues(alpha: 0.45),
+                        blurRadius: 18,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 8), // subtle bottom shadow
+                      ),
+                    ],
+                    border: Border.all(
+                      color: colorHelper.cardColor3.withValues(alpha: 0.1),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      CupertinoIcons.add,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  GestureDetector _showAllButton() => GestureDetector(
+        onTap: () => navigateTo(viewAllPageRoute),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColorHelper().primaryColor.withValues(alpha: 0.3),
+                    AppColorHelper().primaryColor.withValues(alpha: 0.05),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColorHelper().primaryColor.withValues(alpha: 0.1),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(
+                  color: AppColorHelper().borderColor.withValues(alpha: 0.01),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  appText(
+                    "Show All",
+                    color: AppColorHelper().primaryTextColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 10,
+                  ),
+                  width(6),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColorHelper().primaryColor.withValues(alpha: 0.7),
+                          AppColorHelper().primaryColor.withValues(alpha: 0.5),
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(6.0),
+                      child: Icon(Icons.arrow_forward_ios_rounded,
+                          size: 14, color: AppColorHelper().primaryTextColor),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
 
   Padding _incomeContainer() {
-    final colorHelper = AppColorHelper();
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         width: Get.width,
         height: 50,
         decoration: BoxDecoration(
-          color: colorHelper.primaryColor.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColorHelper().cardColor3.withValues(alpha: 0.9),
+              AppColorHelper().cardColor3.withValues(alpha: 0.3),
+            ],
+          ),
+          color: AppColorHelper().cardColor3.withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColorHelper().cardColor3.withValues(alpha: 0.1),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColorHelper().cardColor3.withValues(alpha: 0.25),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            appText("Additional Income : ",
-                fontSize: 15,
-                color: colorHelper.textColor,
-                fontWeight: FontWeight.w600),
-            appText(" + ${controller.rxTotalincome}",
-                fontSize: 15,
-                color: colorHelper.textColor,
-                fontWeight: FontWeight.w800),
+            appText(
+              "Additional Income : ",
+              fontSize: 15,
+              color: Colors.white.withOpacity(0.9),
+              fontWeight: FontWeight.w600,
+            ),
+            appText(
+              " + ${controller.rxTotalincome}",
+              fontSize: 15,
+              color: Colors.white.withOpacity(0.95),
+              fontWeight: FontWeight.w800,
+            ),
           ],
         ),
       ),
@@ -152,35 +309,30 @@ class HomeScreen extends AppBaseView<HomeController> {
     final colorHelper = AppColorHelper();
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      height: 120,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           if (controller.salary.value != 0.0)
             Flexible(
               child: fnButtons(
                   "Transaction",
                   "New Transaction",
-                  Assets.icons.transaction.path,
+                  Assets.icons.add.path,
                   colorHelper.transactionColor, () async {
-                await showModalBottomSheet(
-                  context: Get.context!,
-                  isScrollControlled: true,
-                  backgroundColor: colorHelper.cardColor,
-                  constraints: BoxConstraints.expand(height: Get.height * 0.75),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(40)),
-                  ),
-                  builder: (_) => const TransactionBottomsheet(),
-                );
+                navigateTo(transactionPageRoute);
               }),
             ),
-          if (controller.salary.value != 0.0) width(10),
           Flexible(
-            child: fnButtons("Ledger", "View Ledger",
-                Assets.icons.arrowRight.path, colorHelper.ledgerColor, () {
+            child: fnButtons("Ledger", "View Ledger", Assets.icons.ledger.path,
+                colorHelper.ledgerColor, () {
               navigateTo(ledgerPageRoute);
+            }),
+          ),
+          Flexible(
+            child: fnButtons("Savings", "View Savings",
+                Assets.icons.savings.path, colorHelper.savingsColor, () {
+              navigateTo(savingsPageRoute);
             }),
           ),
         ],
@@ -188,88 +340,48 @@ class HomeScreen extends AppBaseView<HomeController> {
     );
   }
 
-  Expanded fnButtons(String title, String subtitle, String icon, Color clr,
+  Widget fnButtons(String title, String subtitle, String icon, Color clr,
       VoidCallback onTap) {
-    final colorHelper = AppColorHelper();
-
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 130, // fixed height
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: clr,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColorHelper().borderColor.withValues(alpha: 0.08),
+                width: 1,
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // --- Title ---
-              appText(
-                title,
-                color: colorHelper.textColor,
-                fontSize: 16, // fixed font size
-                fontWeight: FontWeight.w700,
-              ),
-              height(12),
-
-              // --- Subtitle row ---
-              Container(
-                height: 45, // fixed height
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: colorHelper.cardColor.withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                    color: colorHelper.primaryColor.withOpacity(0.05),
-                  ),
+              boxShadow: [
+                BoxShadow(
+                  color: clr.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: appText(
-                        subtitle,
-                        color: colorHelper.textColor,
-                        fontSize: 12, // fixed font size
-                        fontWeight: FontWeight.w600,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        color: colorHelper.cardColor,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Image.asset(icon),
-                      ),
-                    ),
-                  ],
+              ],
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Image.asset(
+                  icon,
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+          height(8),
+          appText(
+            title,
+            color: AppColorHelper().primaryTextColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ],
       ),
     );
   }
@@ -341,41 +453,60 @@ class HomeScreen extends AppBaseView<HomeController> {
     final balance = controller.rxTotalbalance.value.toString();
     final digitsBeforeDecimal =
         balance.contains('.') ? balance.split('.')[0].length : balance.length;
-    final fontSize = digitsBeforeDecimal < 7 ? 52.0 : 40.0;
+    final fontSize = digitsBeforeDecimal < 7 ? 42.0 : 32.0;
 
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
         width: Get.width,
-        height: 265,
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              colorHelper.primaryColorDark.withValues(alpha: 0.5),
-              colorHelper.primaryColorDark.withValues(alpha: 0.5),
+              colorHelper.primaryColor.withValues(alpha: 0.25),
+              colorHelper.cardColor.withValues(alpha: 0.15),
             ],
           ),
-          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: colorHelper.borderColor.withValues(alpha: 0.12),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: colorHelper.primaryColor.withValues(alpha: 0.1),
+              blurRadius: 18,
+              spreadRadius: 2,
+              offset: const Offset(0, 6), // gentle bottom glow
+            ),
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.15),
+              blurRadius: 6,
+              spreadRadius: -2,
+              offset: const Offset(0, -3), // subtle top light
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            height(15),
-            appText("Your Balance",
-                fontSize: 16,
-                color: colorHelper.textColor,
-                fontWeight: FontWeight.w500),
+            height(12),
+            appText(
+              "Cash Balance",
+              fontSize: 13,
+              color: colorHelper.primaryTextColor.withValues(alpha: 0.9),
+              fontWeight: FontWeight.w600,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 appText(
                   "$rupeeEmoji $balance",
                   fontSize: fontSize,
-                  color: colorHelper.textColor,
-                  fontWeight: FontWeight.w600,
+                  color: colorHelper.primaryTextColor,
+                  fontWeight: FontWeight.w700,
                 ),
                 GestureDetector(
                   onTap: () async {
@@ -391,55 +522,66 @@ class HomeScreen extends AppBaseView<HomeController> {
                     }
                   },
                   child: Container(
-                    width: 40,
-                    height: 40,
+                    width: 42,
+                    height: 42,
                     decoration: BoxDecoration(
-                      color: colorHelper.cardColor.withValues(alpha: 0.7),
                       shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          colorHelper.primaryColor.withValues(alpha: 0.3),
+                          colorHelper.primaryColorDark.withValues(alpha: 0.3),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              colorHelper.primaryColor.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Icon(
                       controller.salary.value == 0.0 ? Icons.add : Icons.edit,
-                      color: colorHelper.primaryColorDark,
+                      color: colorHelper.primaryTextColor,
+                      size: 22,
                     ),
                   ),
                 ),
               ],
             ),
-            height(5),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                appText(
-                    "${controller.rxTotalspend.value}/${controller.salary.value}",
-                    color: colorHelper.textColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600),
-                SizedBox(
-                  width: Get.width * 0.95,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(2),
-                    child: Obx(() {
-                      final spend = controller.rxTotalspend.value;
-                      final income = controller.salary.value;
-                      final ratio =
-                          (income > 0) ? (spend / income).clamp(0.0, 1.0) : 0.0;
-
-                      return LinearProgressIndicator(
-                        borderRadius: BorderRadius.circular(10),
-                        value: ratio,
-                        backgroundColor:
-                            const Color.fromARGB(84, 255, 255, 255),
-                        valueColor:
-                            AlwaysStoppedAnimation(colorHelper.progressbarclr),
-                        minHeight: 8.5,
-                      );
-                    }),
-                  ),
-                ),
-                height(15),
-                _balanceCard(),
-              ],
+            height(8),
+            appText(
+              "$rupeeEmoji ${controller.rxTotalspend.value}",
+              color: colorHelper.primaryTextColor.withValues(alpha: 0.5),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
             ),
+            SizedBox(
+              width: Get.width * 0.95,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Obx(() {
+                  final spend = controller.rxTotalspend.value;
+                  final income = controller.salary.value;
+                  final ratio =
+                      (income > 0) ? (spend / income).clamp(0.0, 1.0) : 0.0;
+
+                  return LinearProgressIndicator(
+                    borderRadius: BorderRadius.circular(10),
+                    value: ratio,
+                    backgroundColor: Colors.white.withValues(alpha: 0.1),
+                    valueColor:
+                        AlwaysStoppedAnimation(colorHelper.progressbarclr),
+                    minHeight: 8.5,
+                  );
+                }),
+              ),
+            ),
+            height(20),
+            _balanceCard(),
           ],
         ),
       ),
@@ -453,13 +595,13 @@ class HomeScreen extends AppBaseView<HomeController> {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        height: 75,
+        height: 70,
         decoration: BoxDecoration(
-            color: AppColorHelper().primaryColorDark.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(15),
+            color: AppColorHelper().primaryColorDark.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
                 color:
-                    AppColorHelper().primaryColorDark.withValues(alpha: 0.2))),
+                    AppColorHelper().primaryColorDark.withValues(alpha: 0.1))),
         child: Row(
           children: [
             // --- INCOME SIDE ---
@@ -470,17 +612,21 @@ class HomeScreen extends AppBaseView<HomeController> {
                 children: [
                   appText(
                     "Limit",
-                    color: AppColorHelper().textColor.withOpacity(0.9),
+                    color: AppColorHelper()
+                        .primaryTextColor
+                        .withValues(alpha: 0.5),
                     fontWeight: FontWeight.w500,
-                    fontSize: 16,
+                    fontSize: 13,
                   ),
                   height(4),
                   Row(
                     children: [
                       appText(
                         controller.salary.toString(),
-                        fontSize: 20,
-                        color: AppColorHelper().textColor,
+                        fontSize: 18,
+                        color: AppColorHelper()
+                            .primaryTextColor
+                            .withValues(alpha: 0.5),
                         fontWeight: FontWeight.w800,
                       ),
                     ],
@@ -504,15 +650,15 @@ class HomeScreen extends AppBaseView<HomeController> {
                 children: [
                   appText(
                     "Spend",
-                    color: AppColorHelper().textColor.withOpacity(0.9),
+                    color: AppColorHelper().primaryTextColor.withOpacity(0.5),
                     fontWeight: FontWeight.w500,
-                    fontSize: 16,
+                    fontSize: 13,
                   ),
                   height(4),
                   appText(
                     "- ${controller.rxTotalspend.toString()}",
-                    fontSize: 20,
-                    color: AppColorHelper().textColor,
+                    fontSize: 18,
+                    color: AppColorHelper().primaryTextColor.withOpacity(0.5),
                     fontWeight: FontWeight.w800,
                   ),
                 ],
@@ -535,24 +681,21 @@ class HomeScreen extends AppBaseView<HomeController> {
         return Obx(() {
           final isExpanded = controller.expandedIndexMap[parentIndex] == index;
           final Color baseColor = tx.type == 'Expense'
-              ? AppColorHelper().expenseColor
-              : AppColorHelper().incomeColor;
+              ? AppColorHelper().expenseColor.withValues(alpha: 0.3)
+              : AppColorHelper().incomeColor.withValues(alpha: 0.5);
           final cat = controller.categoryIcons.firstWhere(
             (c) => c['name'] == tx.category,
           );
-          bool isToday =
-              DateHelper.convertDateTimeToString(dateTime: tx.date) ==
-                  DateHelper.convertDateTimeToString(dateTime: DateTime.now());
 
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: Material(
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(16),
-              color: AppColorHelper().cardColor.withValues(alpha: 0.1),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap: () {
-                  final groupIndex = parentIndex; // we'll pass this below
+                  final groupIndex = parentIndex;
                   if (controller.expandedIndexMap[groupIndex] == index) {
                     controller.expandedIndexMap.remove(groupIndex);
                   } else {
@@ -560,43 +703,63 @@ class HomeScreen extends AppBaseView<HomeController> {
                   }
                 },
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOutCubic,
                   padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                   decoration: BoxDecoration(
-                    border: isExpanded
-                        ? Border.all(
-                            color: AppColorHelper()
-                                .borderColor
-                                .withValues(alpha: 0.05))
-                        : Border.all(
-                            color: AppColorHelper()
-                                .borderColor
-                                .withValues(alpha: 0.05)),
+                    color: AppColorHelper().cardColor.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color:
+                          AppColorHelper().borderColor.withValues(alpha: 0.06),
+                    ),
                   ),
                   child: Column(
                     children: [
-                      // Main Tile
+                      // Main Tile Row
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Gradient Circle Icon
+                          // Icon Box
                           Container(
-                            width: 48,
-                            height: 48,
+                            width: 45,
+                            height: 45,
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: cat['color'].withOpacity(0.35)),
-                            child: Icon(
-                              cat['icon'],
-                              color: AppColorHelper()
-                                  .primaryTextColor
-                                  .withValues(alpha: 0.8),
+                              borderRadius: BorderRadius.circular(14),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  cat['color'].withOpacity(0.1),
+                                  cat['color'].withOpacity(0.3),
+                                ],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: cat['color'].withOpacity(0.15),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                              border: Border.all(
+                                color: cat['color'].withOpacity(0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                cat['icon'],
+                                color: AppColorHelper()
+                                    .primaryTextColor
+                                    .withValues(alpha: 0.5),
+                                size: 22,
+                              ),
                             ),
                           ),
                           width(12),
-                          // Title & Category
+
+                          // Category + Date
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -607,9 +770,19 @@ class HomeScreen extends AppBaseView<HomeController> {
                                   fontSize: 15,
                                   color: AppColorHelper().primaryTextColor,
                                 ),
+                                const SizedBox(height: 3),
+                                appText(
+                                  DateHelper.convertDateTimeToString(
+                                      dateTime: tx.date),
+                                  fontSize: 12,
+                                  color: AppColorHelper()
+                                      .primaryTextColor
+                                      .withValues(alpha: 0.5),
+                                ),
                               ],
                             ),
                           ),
+
                           // Amount
                           appText(
                             (tx.type == 'Expense' ? "- ₹ " : "+ ₹ ") +
@@ -623,8 +796,8 @@ class HomeScreen extends AppBaseView<HomeController> {
 
                       // Expanded Details
                       AnimatedSize(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeInOutCubic,
                         child: isExpanded
                             ? Padding(
                                 padding: const EdgeInsets.only(top: 12),
@@ -632,40 +805,39 @@ class HomeScreen extends AppBaseView<HomeController> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Divider(
+                                      height: 16,
+                                      thickness: 0.5,
+                                      color: AppColorHelper()
+                                          .borderColor
+                                          .withOpacity(0.08),
+                                    ),
+                                    if (tx.description.isNotEmpty) ...[
+                                      appText(
+                                        "Description",
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
                                         color: AppColorHelper()
-                                            .borderColor
-                                            .withOpacity(0.05)),
-                                    tx.description != ""
-                                        ? Column(
-                                            children: [
-                                              height(6),
-                                              appText(
-                                                "Description",
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColorHelper()
-                                                    .primaryTextColor
-                                                    .withValues(alpha: 0.5),
-                                              ),
-                                              height(4),
-                                              appText(
-                                                tx.description,
-                                                color: AppColorHelper()
-                                                    .primaryTextColor
-                                                    .withValues(alpha: 0.5),
-                                              ),
-                                            ],
-                                          )
-                                        : height(0),
-                                    height(10),
+                                            .primaryTextColor
+                                            .withValues(alpha: 0.6),
+                                      ),
+                                      height(4),
+                                      appText(
+                                        tx.description,
+                                        fontSize: 13,
+                                        color: AppColorHelper()
+                                            .primaryTextColor
+                                            .withValues(alpha: 0.6),
+                                      ),
+                                      height(10),
+                                    ],
                                     Align(
                                       alignment: Alignment.centerRight,
-                                      child: buttonContainer(
+                                      child: errorGradientButtonContainer(
                                         height: 35,
                                         width: 100,
-                                        color: AppColorHelper().cardColor,
-                                        borderColor: AppColorHelper()
-                                            .errorBorderColor
-                                            .withValues(alpha: 0.6),
+                                        color: AppColorHelper()
+                                            .errorColor
+                                            .withOpacity(0.1),
                                         onPressed: () {
                                           controller.deleteTransaction(tx.key);
                                           controller.expandedIndexMap.clear();
@@ -675,11 +847,11 @@ class HomeScreen extends AppBaseView<HomeController> {
                                           children: [
                                             appText(
                                               "Remove",
-                                              fontSize: 10,
+                                              fontSize: 11,
                                               color: AppColorHelper()
-                                                  .errorColor
-                                                  .withValues(alpha: 0.6),
-                                              fontWeight: FontWeight.w800,
+                                                  .primaryTextColor
+                                                  .withValues(alpha: 0.7),
+                                              fontWeight: FontWeight.w700,
                                             ),
                                           ],
                                         ),

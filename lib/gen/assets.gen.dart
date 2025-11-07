@@ -34,6 +34,9 @@ class $AssetsFontsGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/add.png
+  AssetGenImage get add => const AssetGenImage('assets/icons/add.png');
+
   /// File path: assets/icons/arrowRight.png
   AssetGenImage get arrowRight =>
       const AssetGenImage('assets/icons/arrowRight.png');
@@ -110,6 +113,7 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+        add,
         arrowRight,
         borrow,
         datepicker,
@@ -164,6 +168,12 @@ class $AssetsImagesGen {
 class $AssetsLottieGen {
   const $AssetsLottieGen();
 
+  /// File path: assets/lottie/Loading2.json
+  String get loading2 => 'assets/lottie/Loading2.json';
+
+  /// File path: assets/lottie/gradient.json
+  String get gradient => 'assets/lottie/gradient.json';
+
   /// File path: assets/lottie/landing.json
   String get landing => 'assets/lottie/landing.json';
 
@@ -173,11 +183,20 @@ class $AssetsLottieGen {
   /// File path: assets/lottie/loading.json
   String get loading => 'assets/lottie/loading.json';
 
+  /// File path: assets/lottie/nodata.json
+  String get nodata => 'assets/lottie/nodata.json';
+
+  /// File path: assets/lottie/notransactions.json
+  String get notransactions => 'assets/lottie/notransactions.json';
+
   /// File path: assets/lottie/piggy.json
   String get piggy => 'assets/lottie/piggy.json';
 
   /// File path: assets/lottie/savings.json
   String get savings => 'assets/lottie/savings.json';
+
+  /// File path: assets/lottie/setgoal.json
+  String get setgoal => 'assets/lottie/setgoal.json';
 
   /// File path: assets/lottie/waves.json
   String get waves => 'assets/lottie/waves.json';
@@ -186,8 +205,20 @@ class $AssetsLottieGen {
   String get waves2 => 'assets/lottie/waves2.json';
 
   /// List of all assets
-  List<String> get values =>
-      [landing, ledger, loading, piggy, savings, waves, waves2];
+  List<String> get values => [
+        loading2,
+        gradient,
+        landing,
+        ledger,
+        loading,
+        nodata,
+        notransactions,
+        piggy,
+        savings,
+        setgoal,
+        waves,
+        waves2
+      ];
 }
 
 class Assets {

@@ -9,6 +9,7 @@ import 'package:tracker/view/home/home_screen.dart';
 import 'package:tracker/view/landing/landing_screen.dart';
 import 'package:tracker/view/ledger/ledger_screen.dart';
 import 'package:tracker/view/savings/savings_screen.dart';
+import 'package:tracker/view/transactions/transaction_screen.dart';
 import 'package:tracker/view/transactions/view_all_screen.dart';
 import '../binding/splash_binding.dart';
 import '../view/splash/splash_screen.dart';
@@ -22,6 +23,7 @@ const ledgerPageRoute = '/ledger';
 const viewAllPageRoute = '/viewAll';
 const savingsPageRoute = '/savings';
 const cahrtPageRoute = '/chart';
+const transactionPageRoute = '/transaction';
 
 final routes = [
   GetPage(
@@ -40,7 +42,7 @@ final routes = [
       name: homePageRoute,
       page: () => const HomeScreen(),
       binding: const HomeBinding(),
-      transition: Transition.cupertino,
+      transition: Transition.downToUp,
       transitionDuration: const Duration(milliseconds: 200)),
   GetPage(
       name: ledgerPageRoute,
@@ -65,5 +67,11 @@ final routes = [
       page: () => const ChartScreen(),
       binding: const ChartBinding(),
       transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 200)),
+  GetPage(
+      name: transactionPageRoute,
+      page: () => const TransactionScreen(),
+      // binding: const ChartBinding(),
+      transition: Transition.downToUp,
       transitionDuration: const Duration(milliseconds: 200)),
 ];

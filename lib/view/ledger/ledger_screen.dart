@@ -8,6 +8,7 @@ import 'package:tracker/helper/color_helper.dart';
 import 'package:tracker/helper/sizer.dart';
 import 'package:tracker/model/ledger_model.dart';
 import 'package:tracker/view/ledger/ledger_bottomsheet.dart';
+import 'package:tracker/view/widget/text/app_text.dart';
 import '../../controller/home_controller.dart';
 import '../../helper/core/base/app_base_view.dart';
 import '../../helper/date_helper.dart';
@@ -58,7 +59,7 @@ class LedgerScreen extends AppBaseView<HomeController> {
         isPositive
             ? _fundSummaryWidget(
                 AppColorHelper().primaryColor,
-                AppColorHelper().primaryColorDark,
+                AppColorHelper().primaryColor,
                 AppColorHelper().lendColor,
                 Assets.icons.toGet.path,
                 controller.rxledgerDifference)
@@ -118,15 +119,22 @@ class LedgerScreen extends AppBaseView<HomeController> {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: color ?? AppColorHelper().cardColor,
+        color: color,
         borderRadius: BorderRadius.circular(20),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withOpacity(0.1),
-        //     blurRadius: 10,
-        //     offset: const Offset(0, 4),
-        //   ),
-        // ],
+        boxShadow: [
+          BoxShadow(
+            color: color!.withValues(alpha: 0.18),
+            blurRadius: 18,
+            spreadRadius: 2,
+            offset: const Offset(0, 6), // gentle bottom glow
+          ),
+          BoxShadow(
+            color: Colors.white.withValues(alpha: 0.15),
+            blurRadius: 6,
+            spreadRadius: -2,
+            offset: const Offset(0, -3), // subtle top light
+          ),
+        ],
       ),
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: child,
@@ -223,19 +231,19 @@ class LedgerScreen extends AppBaseView<HomeController> {
                   child: appText(
                     title,
                     color: AppColorHelper().primaryTextColor,
-                    fontSize: 15,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          height(14),
           Center(
             child: appText(
               "$rupeeEmoji ${amount.toStringAsFixed(0)}",
               color: color,
-              fontSize: 30,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -244,103 +252,145 @@ class LedgerScreen extends AppBaseView<HomeController> {
     );
   }
 
-  Widget _fundSummaryWidget(Color bgclr, Color gradientClr, Color icnClr,
-      String iconPath, double difference) {
+  Widget _fundSummaryWidget(
+    Color bgclr,
+    Color gradientClr,
+    Color icnClr,
+    String iconPath,
+    double difference,
+  ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Container(
-        height: 110, // slightly taller for modern spacing
-        width: Get.width,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              gradientClr.withOpacity(0.5),
-              gradientClr.withOpacity(0.4),
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(seconds: 8),
+        curve: Curves.linear,
+        builder: (context, value, child) {
+          return Container(
+            height: 110,
+            width: Get.width,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  gradientClr.withValues(alpha: 0.35),
+                  gradientClr.withValues(alpha: 0.05),
+                ],
+              ),
+              border: Border.all(
+                color: AppColorHelper().borderColor.withValues(alpha: 0.1),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: gradientClr.withValues(alpha: 0.18),
+                  blurRadius: 18,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 6), // gentle bottom glow
+                ),
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  blurRadius: 6,
+                  spreadRadius: -2,
+                  offset: const Offset(0, -3), // subtle top light
+                ),
+              ],
             ),
-          ],
-          color: bgclr,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Icon + Value Column
-              Row(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      color: AppColorHelper().cardColor.withOpacity(0.7),
-                      boxShadow: [
-                        BoxShadow(
-                          color: icnClr.withOpacity(0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Image.asset(
-                        iconPath,
-                        color: icnClr,
-                      ),
-                    ),
-                  ),
-                  width(30),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  // Left side: Icon + Balance
+                  Row(
                     children: [
-                      appText(
-                        "₹ ${difference.toStringAsFixed(0)}",
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: AppColorHelper().textColor,
+                      Container(
+                        height: 80,
+                        width: 80,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              AppColorHelper()
+                                  .cardColor
+                                  .withValues(alpha: 0.95),
+                              AppColorHelper().cardColor.withValues(alpha: 0.4),
+                            ],
+                          ),
+                          border: Border.all(
+                            color: icnClr.withOpacity(0.2),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: icnClr.withOpacity(0.2),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Image.asset(
+                            iconPath,
+                            color: icnClr,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 4),
-                      appText(
-                        "Balance",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColorHelper().textColor.withOpacity(0.6),
+                      width(25),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          appText(
+                            "₹ ${difference.toStringAsFixed(0)}",
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: AppColorHelper().textColor,
+                          ),
+                          const SizedBox(height: 6),
+                          appText(
+                            "Balance",
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColorHelper()
+                                .primaryTextColor
+                                .withOpacity(0.6),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+
+                  // Optional trailing tag
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppColorHelper().cardColor.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: appText(
+                      "Overview",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColorHelper().primaryTextColor.withOpacity(0.8),
+                    ),
+                  ),
                 ],
               ),
-
-              // Overview Label
-              // Container(
-              //   padding:
-              //       const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              //   decoration: BoxDecoration(
-              //     color: AppColorHelper().cardColor.withOpacity(0.15),
-              //     borderRadius: BorderRadius.circular(18),
-              //   ),
-              //   child: appText(
-              //     "Overview",
-              //     fontSize: 16,
-              //     fontWeight: FontWeight.w600,
-              //     color: AppColorHelper().primaryTextColor,
-              //   ),
-              // ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
+        onEnd: () {
+          // loop animation for infinite smooth movement
+          Future.delayed(const Duration(milliseconds: 500), () {
+            // triggers rebuild for looping gradient
+          });
+        },
       ),
     );
   }
@@ -497,15 +547,12 @@ class LedgerScreen extends AppBaseView<HomeController> {
                                           ),
                                     Align(
                                       alignment: Alignment.centerRight,
-                                      child: buttonContainer(
+                                      child: errorGradientButtonContainer(
                                         height: 35,
                                         width: 100,
                                         color: AppColorHelper()
                                             .errorColor
                                             .withValues(alpha: 0.1),
-                                        borderColor: AppColorHelper()
-                                            .errorBorderColor
-                                            .withValues(alpha: 0.6),
                                         onPressed: () {
                                           controller.deleteLedger(tx.key);
                                           controller.expandedIndexMap.clear();
@@ -517,8 +564,8 @@ class LedgerScreen extends AppBaseView<HomeController> {
                                               "Remove",
                                               fontSize: 10,
                                               color: AppColorHelper()
-                                                  .errorColor
-                                                  .withValues(alpha: 0.6),
+                                                  .primaryTextColor
+                                                  .withValues(alpha: 0.9),
                                               fontWeight: FontWeight.w800,
                                             ),
                                           ],
@@ -547,38 +594,53 @@ class LedgerScreen extends AppBaseView<HomeController> {
       child: Row(
         children: [
           GestureDetector(
-              onTap: () async {
-                await showModalBottomSheet(
-                  context: Get.context!,
-                  isScrollControlled: true,
-                  backgroundColor: AppColorHelper().backgroundColor,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(28)),
+            onTap: () async {
+              await showModalBottomSheet(
+                context: Get.context!,
+                isScrollControlled: true,
+                backgroundColor: AppColorHelper().backgroundColor,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                ),
+                builder: (context) => LedgerBottomsheet(),
+              );
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 350),
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColorHelper().cardColor3,
+                    AppColorHelper().cardColor3.withValues(alpha: 0.5),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColorHelper().cardColor3.withValues(alpha: 0.45),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 8), // subtle bottom shadow
                   ),
-                  builder: (context) => LedgerBottomsheet(),
-                );
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.35), // shadow color
-                          blurRadius: 50, // softness
-                          spreadRadius: 5, // size of shadow
-                          offset: const Offset(0, 0), // shadow position
-                        ),
-                      ],
-                      shape: BoxShape.circle,
-                      color: AppColorHelper().primaryColor),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Icon(
-                      CupertinoIcons.add,
-                      size: 35,
-                      color: AppColorHelper().textColor,
-                    ),
-                  ))),
+                ],
+                border: Border.all(
+                  color: AppColorHelper().cardColor3.withValues(alpha: 0.1),
+                  width: 1.2,
+                ),
+              ),
+              child: const Center(
+                child: Icon(
+                  CupertinoIcons.add,
+                  size: 30,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -591,11 +653,22 @@ class LedgerScreen extends AppBaseView<HomeController> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          appText(
-              "Easily track the money you lend and borrow, all in one place.",
-              color: AppColorHelper().primaryTextColor,
-              fontSize: 35,
-              fontWeight: FontWeight.w900),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text:
+                      "Easily track the money you lend and borrow, all in one place.",
+                  style: textStyle(
+                    35,
+                    AppColorHelper().primaryTextColor,
+                    FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+            textAlign: TextAlign.left, // important for multiline
+          ),
           Center(
             child: Lottie.asset('assets/lottie/ledger.json',
                 fit: BoxFit.contain, repeat: false, height: 400, width: 400),
@@ -617,25 +690,53 @@ class LedgerScreen extends AppBaseView<HomeController> {
               height: 60,
               width: 250,
               decoration: BoxDecoration(
-                  color: AppColorHelper().primaryColor,
-                  borderRadius: BorderRadius.circular(15)),
-              child: Center(
-                  child: Row(
+                borderRadius: BorderRadius.circular(15),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColorHelper().primaryColor.withValues(alpha: 0.4),
+                    AppColorHelper().primaryColor.withValues(alpha: 0.4),
+                    AppColorHelper().primaryColor.withValues(alpha: 0.05),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        AppColorHelper().primaryColor.withValues(alpha: 0.18),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 6), // gentle bottom glow
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    blurRadius: 6,
+                    spreadRadius: -2,
+                    offset: const Offset(0, -3), // subtle top light
+                  ),
+                ],
+                border: Border.all(
+                  color: AppColorHelper().borderColor.withValues(alpha: 0.1),
+                ),
+              ),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  appText("Start Adding",
-                      color: AppColorHelper().textColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.w700),
+                  appText(
+                    "Start Adding",
+                    color: AppColorHelper().primaryTextColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                   width(15),
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: AppColorHelper().textColor,
-                  )
+                    color: AppColorHelper().primaryTextColor,
+                  ),
                 ],
-              )),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

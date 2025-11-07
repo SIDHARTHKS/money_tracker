@@ -43,16 +43,16 @@ kotlinOptions {
         create("dev") {
             dimension = "environment"
             applicationIdSuffix = ".dev"
-            resValue("string", "app_name", "Expense Tracker Dev")
+            resValue("string", "app_name", "Expenses Dev")
         }
         create("uat") {
             dimension = "environment"
             applicationIdSuffix = ".uat"
-            resValue("string", "app_name", "Expense Tracker Uat")
+            resValue("string", "app_name", "Expense Uat")
         }
         create("prod") {
             dimension = "environment"
-            resValue("string", "app_name", "Expense Tracker Franchise")
+            resValue("string", "app_name", "Expense")
         }
     }
 }
